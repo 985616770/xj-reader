@@ -2,14 +2,19 @@
   #app
     #nav
       router-link(to="/") Home
-        span.text Abcdefyhisdjfljska
+        span.text 12344abcdefj
     router-view
 </template>
 <script>
-export default {}
+export default {
+  mounted() {
+    this.$store.dispatch('setTest', 10).then(() => {
+      console.log(this.$store.state.test)
+    })
+  }
+}
 document.addEventListener('DOMContentLoaded', () => {
   const html = document.querySelector('html')
-  console.log(html)
   let fontSize = window.innerWidth / 10
   fontSize = fontSize > 50 ? 50 : fontSize
   html.style.fontSize = `${fontSize}px`
@@ -18,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <style lang="scss">
 .text {
-  font-family: 'Indie Flower';
+  font-family: 'Indie Flower',serif;
   font-size: 1rem;
 }
 </style>
