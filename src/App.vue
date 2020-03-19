@@ -2,7 +2,7 @@
   #app
     #nav
       router-link(to="/") Home
-        span.text 12344abcdefj
+        span.text
     router-view
 </template>
 <script>
