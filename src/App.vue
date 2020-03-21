@@ -1,37 +1,15 @@
 <template lang="pug">
   #app
-    #nav
-      router-link(to="/") Home
-        span.text
     router-view
 </template>
 <script>
 import { mapGetters } from 'vuex'
-const getters = {
-  a: () => 1,
-  b: () => 2
-}
-
-function fn(keys) {
-  const data = {}
-  keys.forEach(key => {
-    if (getters.hasOwnProperty(key)) {
-      data[key] = getters[key]
-    }
-  })
-  return data
-}
 
 export default {
   computed: {
-    ...mapGetters(['test']),
-    ...fn(['a', 'b'])
+    ...mapGetters(['test'])
   },
-  mounted() {
-    this.$store.dispatch('setTest', 10).then(() => {
-      console.log(this.test, this.a, this.b)
-    })
-  }
+  mounted() {}
 }
 document.addEventListener('DOMContentLoaded', () => {
   const html = document.querySelector('html')
@@ -42,8 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <style lang="scss">
-.text {
-  font-family: 'Indie Flower', serif;
-  font-size: 1rem;
+@import "~@/assets/styles/global.scss";
+
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 </style>
