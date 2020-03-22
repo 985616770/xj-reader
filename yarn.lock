@@ -9009,6 +9009,11 @@ vue-hot-reload-api@^2.3.0:
   resolved "https://registry.npm.taobao.org/vue-hot-reload-api/download/vue-hot-reload-api-2.3.4.tgz#532955cc1eb208a3d990b3a9f9a70574657e08f2"
   integrity sha1-UylVzB6yCKPZkLOp+acFdGV+CPI=
 
+vue-i18n@^8.15.5:
+  version "8.15.5"
+  resolved "https://registry.npm.taobao.org/vue-i18n/download/vue-i18n-8.15.5.tgz#e39e4724c88ec38ef72217de325e8b10a35718cf"
+  integrity sha1-455HJMiOw473IhfeMl6LEKNXGM8=
+
 vue-loader@^15.8.3:
   version "15.9.0"
   resolved "https://registry.npm.taobao.org/vue-loader/download/vue-loader-15.9.0.tgz#5d4b0378a4606188fc83e587ed23c94bc3a10998"
@@ -9078,6 +9083,11 @@ wcwidth@^1.0.1:
   integrity sha1-8LDc+RW8X/FSivrbLA4XtTLaL+g=
   dependencies:
     defaults "^1.0.3"
+
+web-storage-cache@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.npm.taobao.org/web-storage-cache/download/web-storage-cache-1.1.1.tgz#42ac07e77ea860e884895be9ba99ab1e04eb162e"
+  integrity sha1-QqwH536oYOiEiVvpupmrHgTrFi4=
 
 webpack-bundle-analyzer@^3.6.0:
   version "3.6.0"
