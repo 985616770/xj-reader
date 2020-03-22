@@ -6,7 +6,15 @@
 <script>
 import Epub from 'epubjs'
 import { ebookMixin } from '@/utils/mixin'
-import { getFontFamily, getFontSize, getTheme, saveFontFamily, saveFontSize, saveTheme } from '@/utils/localStorage'
+import {
+  getFontFamily,
+  getFontSize,
+  getLocation,
+  getTheme,
+  saveFontFamily,
+  saveFontSize,
+  saveTheme
+} from '@/utils/localStorage'
 
 global.ePub = Epub
 
@@ -18,18 +26,20 @@ export default {
       const url = `${process.env.VUE_APP_RES_URL}epub/${this.fileName}.epub`
       this.book = new Epub(url)
       this.setCurrentBook(this.book)
-      this.rendition = this.book.renderTo('read', {
-        width: innerWidth,
-        height: innerHeight
-      })
 
-      this.rendition.display().then(() => {
-        this.initFont()
-        this.initFontSize()
-        this.initTheme()
-        this.initGlobalStyle()
-      })
-
+      this.initRendition()
+      this.initGesture()
+      this.book.ready
+        .then(() => {
+          return this.book.locations.generate((750 * (window.innerWidth / 375) * getFontSize(this.fileName)) / 16)
+        })
+        .then(() => {
+          this.setBookAvailable(true)
+          this.refreshLocation()
+        })
+    },
+    // 初始化手势
+    initGesture() {
       this.rendition.on('touchstart', event => {
         this.touchStartX = event.changedTouches[0].clientX
         this.touchStartTime = event.timeStamp
@@ -51,6 +61,21 @@ export default {
         // event.preventDefault()
         event.stopPropagation()
       })
+    },
+    // 渲染页面
+    initRendition() {
+      this.rendition = this.book.renderTo('read', {
+        width: innerWidth,
+        height: innerHeight
+      })
+      const location = getLocation(this.fileName)
+
+      this.display(location, () => {
+        this.initFont()
+        this.initFontSize()
+        this.initTheme()
+        this.initGlobalStyle()
+      })
 
       this.rendition.hooks.content.register(contents => {
         Promise.all([
@@ -64,16 +89,23 @@ export default {
         })
       })
     },
+
     // 上一页
     prevPage() {
       if (this.rendition) {
-        this.rendition.prev()
+        this.rendition.prev().then(() => {
+          this.refreshLocation()
+        })
+        this.hideTitleAndMenu()
       }
     },
     // 下一页
     nextPage() {
       if (this.rendition) {
-        this.rendition.next()
+        this.rendition.next().then(() => {
+          this.refreshLocation()
+        })
+        this.hideTitleAndMenu()
       }
     },
     // 切换显示标题和菜单
@@ -122,6 +154,7 @@ export default {
     }
   },
   mounted() {
+    // 根据动态路由获取书籍路径
     this.setFileName(this.$route.params.fileName.split('|').join('/')).then(() => {
       this.initEpub()
     })

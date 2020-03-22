@@ -13,6 +13,7 @@
   ebook-setting-font
   ebook-setting-font-popup
   ebook-setting-theme
+  ebook-setting-progress
 </template>
 
 <script>
@@ -20,11 +21,12 @@ import { ebookMixin } from '@/utils/mixin'
 import EbookSettingFont from '@/components/ebook/EbookSettingFont'
 import EbookSettingFontPopup from '@/components/ebook/EbookSettingFontPopup'
 import EbookSettingTheme from '@/components/ebook/EbookSettingTheme'
+import EbookSettingProgress from '@/components/ebook/EbookSettingProgress'
 
 export default {
   name: 'EbookMenu',
   mixins: [ebookMixin],
-  components: { EbookSettingTheme, EbookSettingFontPopup, EbookSettingFont },
+  components: { EbookSettingProgress, EbookSettingTheme, EbookSettingFontPopup, EbookSettingFont },
   mounted() {
     console.log(this.settingVisible)
   },

@@ -7,11 +7,11 @@ const book = {
     defaultFontFamily: 'Default', // 默认字体主题
     fontFamilyVisible: false, // 是否显示字体设置
     defaultTheme: 'Default', // 默认主题
-    bookAvailable: false, //
-    progress: 0, //
-    section: 0, //
+    bookAvailable: false, // 图书是否可用
+    progress: 0, // 进度
+    section: 0, // 章节
     isPaginating: true, //
-    currentBook: null, //
+    currentBook: null, // 当前书籍
     navigation: null, //
     cover: null, //
     metadata: null, //
