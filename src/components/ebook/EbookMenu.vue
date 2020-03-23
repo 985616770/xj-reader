@@ -14,6 +14,7 @@
   ebook-setting-font-popup
   ebook-setting-theme
   ebook-setting-progress
+  e-book-slide
 </template>
 
 <script>
@@ -22,11 +23,12 @@ import EbookSettingFont from '@/components/ebook/EbookSettingFont'
 import EbookSettingFontPopup from '@/components/ebook/EbookSettingFontPopup'
 import EbookSettingTheme from '@/components/ebook/EbookSettingTheme'
 import EbookSettingProgress from '@/components/ebook/EbookSettingProgress'
+import EBookSlide from '@/components/ebook/EBookSlide'
 
 export default {
   name: 'EbookMenu',
   mixins: [ebookMixin],
-  components: { EbookSettingProgress, EbookSettingTheme, EbookSettingFontPopup, EbookSettingFont },
+  components: { EBookSlide, EbookSettingProgress, EbookSettingTheme, EbookSettingFontPopup, EbookSettingFont },
   mounted() {
     console.log(this.settingVisible)
   },
@@ -45,7 +47,7 @@ export default {
     position: absolute;
     bottom: 0;
     left: 0;
-    z-index: 102;
+    z-index: 151;
     display: flex;
     width: 100%;
     height: px2rem(48);

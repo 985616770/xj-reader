@@ -1,7 +1,7 @@
-$ratio:375/10;
+$ratio: 375/10;
 
-@function px2rem($px){
-  @return $px/$ratio +rem;
+@function px2rem($px) {
+  @return $px/$ratio + rem;
 }
 
 @mixin center {
@@ -21,8 +21,18 @@ $ratio:375/10;
   align-items: center;
 }
 
-@mixin ellipsis{
+@mixin ellipsis {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+
+@mixin ellipsis2($line) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $line;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: keep-all;
 }

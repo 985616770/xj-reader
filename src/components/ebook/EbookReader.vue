@@ -1,6 +1,9 @@
 <template lang="pug">
   .ebook-reader
     #read
+    .ebook-reader-mask(@click="onMaskClick"
+    @touchmove="move"
+    @touchend="moveEnd")
 </template>
 
 <script>
@@ -15,6 +18,7 @@ import {
   saveFontSize,
   saveTheme
 } from '@/utils/localStorage'
+import { flatten } from '@/utils/book'
 
 global.ePub = Epub
 
@@ -22,13 +26,41 @@ export default {
   name: 'EbookReader',
   mixins: [ebookMixin],
   methods: {
+    // 蒙板点击事件
+    onMaskClick(e) {
+      const offsetX = e.offsetX
+      const width = window.innerWidth
+      if (offsetX > 0 && offsetX < width * 0.3) {
+        this.prevPage()
+      } else if (offsetX > 0 && offsetX > width * 0.7) {
+        this.nextPage()
+      } else {
+        this.toggleTitleAndMenu()
+      }
+    },
+    move(e) {
+      let offsetY = 0
+      if (this.firstOffsetY) {
+        offsetY = e.changedTouches[0].clientY - this.firstOffsetY
+        this.setOffsetY(offsetY)
+      } else {
+        this.firstOffsetY = e.changedTouches[0].clientY
+      }
+      e.preventDefault()
+      e.stopPropagation()
+    },
+    moveEnd(e) {
+      this.setOffsetY(0)
+      this.firstOffsetY = null
+    },
     initEpub() {
       const url = `${process.env.VUE_APP_RES_URL}epub/${this.fileName}.epub`
       this.book = new Epub(url)
       this.setCurrentBook(this.book)
 
       this.initRendition()
-      this.initGesture()
+      // this.initGesture()
+      this.parseBook()
       this.book.ready
         .then(() => {
           return this.book.locations.generate((750 * (window.innerWidth / 375) * getFontSize(this.fileName)) / 16)
@@ -38,30 +70,57 @@ export default {
           this.refreshLocation()
         })
     },
-    // 初始化手势
-    initGesture() {
-      this.rendition.on('touchstart', event => {
-        this.touchStartX = event.changedTouches[0].clientX
-        this.touchStartTime = event.timeStamp
+    // 解析书籍获取封面信息
+    parseBook() {
+      // 获取封面
+      this.book.loaded.cover.then(cover => {
+        this.book.archive.createUrl(cover).then(url => {
+          this.setCover(url)
+        })
       })
-      this.rendition.on('touchend', event => {
-        const offsetX = event.changedTouches[0].clientX - this.touchStartX
-        const time = event.timeStamp - this.touchStartTime
-        if (time < 500 && offsetX > 40) {
-          this.prevPage()
-          this.hideTitleAndMenu()
-        } else if (time < 500 && offsetX < -40) {
-          this.nextPage()
-          this.hideTitleAndMenu()
-        } else {
-          this.toggleTitleAndMenu()
-          this.setSettingVisible(-1)
-          this.setFontFamilyVisible(false)
+      // 获取书籍信息
+      this.book.loaded.metadata.then(metadata => {
+        this.setMetadata(metadata)
+      })
+      // 获取目录的信息,并对其进行处理.(难点)
+      this.book.loaded.navigation.then(nav => {
+        const navItem = flatten(nav.toc)
+        function find(item, level = 0) {
+          return !item.parent ? level : find(navItem.filter(parentItem => parentItem.id === item.parent)[0], ++level)
         }
-        // event.preventDefault()
-        event.stopPropagation()
+        navItem.forEach(item => {
+          item.level = find(item)
+        })
+        this.setNavigation(navItem)
       })
     },
+    // 初始化手势
+    // initGesture() {
+    //   this.rendition.on('touchstart', event => {
+    //     this.touchStartX = event.changedTouches[0].clientX
+    //     this.touchStartTime = event.timeStamp
+    //   })
+    //   this.rendition.on('touchend', event => {
+    //     const offsetX = event.changedTouches[0].clientX - this.touchStartX
+    //     const time = event.timeStamp - this.touchStartTime
+    //     if (time < 500 && offsetX > 40) {
+    //       this.prevPage()
+    //       this.hideTitleAndMenu()
+    //     } else if (time < 500 && offsetX < -40) {
+    //       this.nextPage()
+    //       this.hideTitleAndMenu()
+    //     } else {
+    //       this.toggleTitleAndMenu()
+    //       this.setSettingVisible(-1)
+    //       this.setFontFamilyVisible(false)
+    //     }
+    //     // event.preventDefault()
+    //     event.stopPropagation()
+    //   })
+    //   this.rendition.on('touchmove', event => {
+    //     console.log(123)
+    //   })
+    // },
     // 渲染页面
     initRendition() {
       this.rendition = this.book.renderTo('read', {
@@ -89,7 +148,6 @@ export default {
         })
       })
     },
-
     // 上一页
     prevPage() {
       if (this.rendition) {
@@ -111,12 +169,6 @@ export default {
     // 切换显示标题和菜单
     toggleTitleAndMenu() {
       this.setMenuVisible(!this.menuVisible)
-    },
-    // 出现标题菜单不允许翻页
-    hideTitleAndMenu() {
-      this.setMenuVisible(false)
-      this.setSettingVisible(-1)
-      this.setFontFamilyVisible(false)
     },
     // 初始化字体
     initFont() {
@@ -164,4 +216,18 @@ export default {
 
 <style lang="scss" scoped>
 @import '~@/assets/styles/global';
+.ebook-reader {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  .ebook-reader-mask {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 150;
+    top: 0;
+    left: 0;
+    background: transparent;
+  }
+}
 </style>

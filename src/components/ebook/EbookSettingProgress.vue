@@ -27,20 +27,21 @@
 
 <script>
 import { ebookMixin } from '@/utils/mixin'
-import { getReadTime } from '@/utils/localStorage'
 
 export default {
   name: 'EbookSettingProgress',
   mixins: [ebookMixin],
   computed: {
     getSectionName() {
-      if (this.section) {
-        const sectionInfo = this.currentBook.section(this.section)
-        if (sectionInfo && sectionInfo.href) {
-          return this.currentBook.navigation.get(sectionInfo.href).label
-        }
-      }
-      return ''
+      // 对于二级目录无效
+      // if (this.section) {
+      //   const sectionInfo = this.currentBook.section(this.section)
+      //   if (sectionInfo && sectionInfo.href && this.currentBook && this.currentBook.navigation) {
+      //     return this.currentBook.navigation.get(sectionInfo.href).label
+      //   }
+      // }
+      // return ''
+      return this.section ? this.navigation[this.section].label : ''
     }
   },
   methods: {
@@ -90,15 +91,6 @@ export default {
       if (sectionInfo && sectionInfo.href) {
         this.display(sectionInfo.href)
       }
-    },
-    getReadTimeText() {
-      let readTime = getReadTime(this.fileName)
-      if (!readTime) {
-        readTime = 0
-      } else {
-        readTime = Math.ceil(readTime / 60)
-      }
-      return this.$t('book.haveRead').replace('$1', readTime)
     }
   },
   updated() {
@@ -113,7 +105,7 @@ export default {
   position: absolute;
   bottom: px2rem(48);
   left: 0;
-  z-index: 100;
+  z-index: 151;
   width: 100%;
   height: px2rem(90);
   box-shadow: 0 px2rem(-8) px2rem(8) rgba(0, 0, 0, 0.15);

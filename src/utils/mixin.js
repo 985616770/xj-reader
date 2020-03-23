@@ -1,6 +1,6 @@
 import { mapActions, mapGetters } from 'vuex'
 import { addCss, removeAllCss, themeList } from '@/utils/book'
-import { saveLocation } from '@/utils/localStorage'
+import { getBookmark, getReadTime, saveLocation } from '@/utils/localStorage'
 
 export const ebookMixin = {
   computed: {
@@ -75,11 +75,24 @@ export const ebookMixin = {
     // 变换百分比,保存进度
     refreshLocation() {
       const currentLocation = this.currentBook.rendition.currentLocation()
-      const startCfi = currentLocation.start.cfi
-      const progress = this.currentBook.locations.percentageFromCfi(startCfi)
-      this.setProgress(Math.floor(progress * 100))
-      this.setSection(currentLocation.start.index)
-      saveLocation(this.fileName, startCfi)
+      if (currentLocation && currentLocation.start) {
+        const startCfi = currentLocation.start.cfi
+        const progress = this.currentBook.locations.percentageFromCfi(startCfi)
+        this.setProgress(Math.floor(progress * 100))
+        this.setSection(currentLocation.start.index)
+        saveLocation(this.fileName, startCfi)
+        const bookmark = getBookmark(this.fileName)
+        console.log(bookmark)
+        if (bookmark) {
+          if (bookmark.some(item => item.cfi === startCfi)) {
+            this.setIsBookmark(true)
+          } else {
+            this.setIsBookmark(false)
+          }
+        } else {
+          this.setIsBookmark(false)
+        }
+      }
     },
     // 读取存储的cfi,跳转页数(无则直接跳转)
     display(target, cb) {
@@ -94,6 +107,22 @@ export const ebookMixin = {
           if (cb) cb()
         })
       }
+    },
+    // 出现标题菜单不允许翻页
+    hideTitleAndMenu() {
+      this.setMenuVisible(false)
+      this.setSettingVisible(-1)
+      this.setFontFamilyVisible(false)
+    },
+    // 显示阅读时间
+    getReadTimeText() {
+      let readTime = getReadTime(this.fileName)
+      if (!readTime) {
+        readTime = 0
+      } else {
+        readTime = Math.ceil(readTime / 60)
+      }
+      return this.$t('book.haveRead').replace('$1', readTime)
     }
   }
 }
