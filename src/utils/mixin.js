@@ -27,6 +27,9 @@ export const ebookMixin = {
     ]),
     themeList() {
       return themeList(this)
+    },
+    getSectionName() {
+      return this.section ? this.navigation[this.section].label : ''
     }
   },
   methods: {
@@ -82,7 +85,6 @@ export const ebookMixin = {
         this.setSection(currentLocation.start.index)
         saveLocation(this.fileName, startCfi)
         const bookmark = getBookmark(this.fileName)
-        console.log(bookmark)
         if (bookmark) {
           if (bookmark.some(item => item.cfi === startCfi)) {
             this.setIsBookmark(true)
@@ -91,6 +93,18 @@ export const ebookMixin = {
           }
         } else {
           this.setIsBookmark(false)
+        }
+        // 总页数
+        if (this.pagelist) {
+          const totalPage = this.pagelist.length
+          const currentPage = currentLocation.start.location
+          if (currentPage && currentPage > 0) {
+            this.setPaginate(currentPage + ' / ' + totalPage)
+          } else {
+            this.setPaginate('')
+          }
+        } else {
+          this.setPaginate('')
         }
       }
     },

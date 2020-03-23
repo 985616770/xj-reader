@@ -1,9 +1,11 @@
 <template lang="pug">
   .ebook(ref="ebook")
+    ebook-header
     ebook-title
     ebook-reader
     ebook-menu
     ebook-bookmark
+    ebook-footer
 </template>
 
 <script>
@@ -13,11 +15,13 @@ import EbookMenu from '@/components/ebook/EbookMenu'
 import { getReadTime, saveReadTime } from '@/utils/localStorage'
 import { ebookMixin } from '@/utils/mixin'
 import EbookBookmark from '@/components/ebook/EbookBookmark'
+import EbookHeader from '@/components/ebook/EbookHeader'
+import EbookFooter from '@/components/ebook/EbookFooter'
 
 export default {
   name: 'Ebook',
   mixins: [ebookMixin],
-  components: { EbookBookmark, EbookMenu, EbookTitle, EbookReader },
+  components: { EbookFooter, EbookHeader, EbookBookmark, EbookMenu, EbookTitle, EbookReader },
   watch: {
     // 偏移量
     offsetY(v) {

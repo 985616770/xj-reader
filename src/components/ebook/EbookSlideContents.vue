@@ -15,8 +15,10 @@
     .slide-contents-book-img-wrapper
       img.slide-contents-book-img(:src="cover")
     .slide-contents-book-info-wrapper
-      .slide-contents-book-title {{metadata.title}}
-      .slide-contents-book-author {{metadata.creator}}
+      .slide-contents-book-title
+        span.slide-contents-book-title-text {{metadata.title}}
+      .slide-contents-book-author
+        span.slide-contents-book-author-text {{metadata.creator}}
     .slide-contents-book-progress-wrapper
       .slide-contents-book-progress
         span.progress {{`${progress}%`}}
@@ -29,7 +31,7 @@
         :class="{'selected': section === index}"
         @click="displayContent(item.href)"
         ) {{item.label}}
-      span.slide-contents-item-page
+      span.slide-contents-item-page {{item.page}}
   scroll.slide-search-list(:top="66" :bottom="48" v-show="searchVisible")
     .slide-search-item(v-for="(item, index) in searchList"
       :key="index"
@@ -99,7 +101,6 @@ export default {
             )
             return item.excerpt
           })
-          console.log(list)
         })
       }
     }
@@ -164,15 +165,21 @@ export default {
       box-sizing: border-box;
       .slide-contents-book-title {
         // 375*0.85 - 30 - 20 - 45- 70 = 153.75
-        width: px2rem(153.75);
+        /*width: px2rem(153.75);*/
         font-size: px2rem(14);
-        @include ellipsis;
+        @include left;
+        .slide-contents-book-title-text {
+          @include ellipsis2(3);
+        }
       }
       .slide-contents-book-author {
-        width: px2rem(153.75);
+        /*width: px2rem(153.75);*/
         font-size: px2rem(12);
         margin-top: px2rem(5);
-        @include ellipsis2(2);
+        display: flex;
+        .slide-contents-book-author-text {
+          @include ellipsis2(1);
+        }
       }
     }
     .slide-contents-book-progress-wrapper {
@@ -207,6 +214,9 @@ export default {
         @include ellipsis;
       }
       .slide-contents-item-page {
+        flex: 0 0 px2rem(30);
+        font-size: px2rem(10);
+        @include right;
       }
     }
   }

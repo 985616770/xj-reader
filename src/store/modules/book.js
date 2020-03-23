@@ -17,7 +17,7 @@ const book = {
     metadata: null, // 书籍信息
     paginate: '', //
     pagelist: null, //
-    offsetY: 0, //
+    offsetY: 0, // 偏移量
     isBookmark: null // 是否为书签页
   },
   mutations: {

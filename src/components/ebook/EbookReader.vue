@@ -1,9 +1,14 @@
 <template lang="pug">
   .ebook-reader
     #read
-    .ebook-reader-mask(@click="onMaskClick"
-    @touchmove="move"
-    @touchend="moveEnd")
+    .ebook-reader-mask(
+      @click="onMaskClick"
+      @touchmove="move"
+      @touchend="moveEnd"
+      @mousedown.left="onMouseEnter"
+      @mousemove.left="onMouseMove"
+      @mouseup.left="onMouseEnd"
+    )
 </template>
 
 <script>
@@ -28,6 +33,7 @@ export default {
   methods: {
     // 蒙板点击事件
     onMaskClick(e) {
+      if (this.mouseState && (this.mouseState === 2 || this.mouseState === 3)) return
       const offsetX = e.offsetX
       const width = window.innerWidth
       if (offsetX > 0 && offsetX < width * 0.3) {
@@ -38,6 +44,7 @@ export default {
         this.toggleTitleAndMenu()
       }
     },
+    // 触摸移动
     move(e) {
       let offsetY = 0
       if (this.firstOffsetY) {
@@ -49,23 +56,91 @@ export default {
       e.preventDefault()
       e.stopPropagation()
     },
+    // 触摸结束复位
     moveEnd(e) {
       this.setOffsetY(0)
       this.firstOffsetY = null
     },
+    // 1.鼠标进入 2.鼠标进入后的移动 3.鼠标从移动状态松手 4.鼠标还原
+    onMouseEnter(e) {
+      this.mouseState = 1
+      this.mouseStartTime = e.timeStamp
+      e.preventDefault()
+      e.stopPropagation()
+    },
+    onMouseMove(e) {
+      if (this.mouseState === 1) {
+        this.mouseState = 2
+      } else if (this.mouseState === 2) {
+        let offsetY = 0
+        if (this.firstOffsetY) {
+          offsetY = e.clientY - this.firstOffsetY
+          this.setOffsetY(offsetY)
+        } else {
+          this.firstOffsetY = e.clientY
+        }
+      }
+      e.preventDefault()
+      e.stopPropagation()
+    },
+    onMouseEnd(e) {
+      if (this.mouseState === 2) {
+        this.setOffsetY(0)
+        this.firstOffsetY = null
+        this.mouseState = 3
+      } else {
+        this.mouseState = 4
+      }
+      const time = e.timeStamp - this.mouseStartTime
+      if (time < 200) {
+        this.mouseState = 4
+      }
+      e.preventDefault()
+      e.stopPropagation()
+    },
+    // 初始化epubjs
     initEpub() {
       const url = `${process.env.VUE_APP_RES_URL}epub/${this.fileName}.epub`
       this.book = new Epub(url)
       this.setCurrentBook(this.book)
 
       this.initRendition()
-      // this.initGesture()
       this.parseBook()
       this.book.ready
         .then(() => {
           return this.book.locations.generate((750 * (window.innerWidth / 375) * getFontSize(this.fileName)) / 16)
         })
-        .then(() => {
+        .then(locations => {
+          // 每个章节含有的页数
+          this.navigation.forEach(nav => {
+            nav.pagelist = []
+          })
+          locations.forEach(item => {
+            // 获取章节信息
+            const loc = item.match(/\[(.*)\]!/)[1]
+            // 获取navigation中的href 和 loc 的比较
+            this.navigation.forEach(nav => {
+              if (nav.href) {
+                // xxx.html 取xxx
+                const href = nav.href.match(/^(.*)\.x?html$/)[1]
+                if (href === loc) {
+                  nav.pagelist.push(item)
+                }
+              }
+            })
+            // 进行页数的统计,获取每一章节的起始页数
+            let currentPage = 1
+            this.navigation.forEach((nav, index) => {
+              if (index === 0) {
+                nav.page = 1
+              } else {
+                nav.page = currentPage
+              }
+              currentPage += nav.pagelist.length + 1
+            })
+          })
+          console.log(locations)
+          this.setPagelist(locations)
           this.setBookAvailable(true)
           this.refreshLocation()
         })
@@ -94,38 +169,13 @@ export default {
         this.setNavigation(navItem)
       })
     },
-    // 初始化手势
-    // initGesture() {
-    //   this.rendition.on('touchstart', event => {
-    //     this.touchStartX = event.changedTouches[0].clientX
-    //     this.touchStartTime = event.timeStamp
-    //   })
-    //   this.rendition.on('touchend', event => {
-    //     const offsetX = event.changedTouches[0].clientX - this.touchStartX
-    //     const time = event.timeStamp - this.touchStartTime
-    //     if (time < 500 && offsetX > 40) {
-    //       this.prevPage()
-    //       this.hideTitleAndMenu()
-    //     } else if (time < 500 && offsetX < -40) {
-    //       this.nextPage()
-    //       this.hideTitleAndMenu()
-    //     } else {
-    //       this.toggleTitleAndMenu()
-    //       this.setSettingVisible(-1)
-    //       this.setFontFamilyVisible(false)
-    //     }
-    //     // event.preventDefault()
-    //     event.stopPropagation()
-    //   })
-    //   this.rendition.on('touchmove', event => {
-    //     console.log(123)
-    //   })
-    // },
     // 渲染页面
     initRendition() {
       this.rendition = this.book.renderTo('read', {
         width: innerWidth,
-        height: innerHeight
+        height: innerHeight,
+        method: 'default'
+        // flow: 'scrolled'
       })
       const location = getLocation(this.fileName)
 
@@ -143,9 +193,7 @@ export default {
           contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
           contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`),
           contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/IndieFlower.css`)
-        ]).then(() => {
-          console.log('down...')
-        })
+        ])
       })
     },
     // 上一页
