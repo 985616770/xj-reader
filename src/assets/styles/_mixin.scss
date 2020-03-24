@@ -1,4 +1,6 @@
 $ratio: 375/10;
+$animationTime: 0.2s;
+$animationType: linear;
 
 @function px2rem($px) {
   @return $px/$ratio + rem;
@@ -21,6 +23,13 @@ $ratio: 375/10;
   align-items: center;
 }
 
+@mixin columnLeft{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
 @mixin ellipsis {
   text-overflow: ellipsis;
   overflow: hidden;
@@ -35,4 +44,14 @@ $ratio: 375/10;
   overflow: hidden;
   text-overflow: ellipsis;
   word-break: keep-all;
+}
+.icon {
+  color: #666666;
+  font-size: px2rem(16);
+}
+
+.title {
+  color: #666666;
+  font-size: px2rem(16);
+  font-weight: bold;
 }

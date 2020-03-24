@@ -1,4 +1,4 @@
-const book = {
+const getters = {
   fileName: state => state.book.fileName,
   menuVisible: state => state.book.menuVisible,
   settingVisible: state => state.book.settingVisible,
@@ -17,7 +17,9 @@ const book = {
   paginate: state => state.book.paginate,
   pagelist: state => state.book.pagelist,
   offsetY: state => state.book.offsetY,
-  isBookmark: state => state.book.isBookmark
+  isBookmark: state => state.book.isBookmark,
+  hotSearchOffsetY: state => state.store.hotSearchOffsetY,
+  flapCardVisible: state => state.store.flapCardVisible
 }
 
-export default book
+export default getters
