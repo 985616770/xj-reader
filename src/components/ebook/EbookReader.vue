@@ -139,7 +139,6 @@ export default {
               currentPage += nav.pagelist.length + 1
             })
           })
-          console.log(locations)
           this.setPagelist(locations)
           this.setBookAvailable(true)
           this.refreshLocation()
@@ -184,6 +183,7 @@ export default {
         this.initFontSize()
         this.initTheme()
         this.initGlobalStyle()
+        console.log('加载完成...')
       })
 
       this.rendition.hooks.content.register(contents => {

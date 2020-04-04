@@ -51,9 +51,9 @@ export default {
       this.display(cfi)
     },
     // 更新进度条
-    // FIXME: 不生效
     updateProgressBg() {
-      this.$refs.progress.style.backgroundSize = `${this.progress}% 100% `
+      // css设置important的方法
+      this.$refs.progress.style.setProperty('background-size', `${this.progress}% 100%`, 'important')
     },
     // 上一章
     prevSection() {
