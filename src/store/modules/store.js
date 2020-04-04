@@ -1,7 +1,7 @@
 const store = {
   state: {
     hotSearchOffsetY: 0,
-    flapCardVisible: true
+    flapCardVisible: false
   },
   mutations: {
     SET_HOT_SEARCH_OFFSET_Y(state, hotSearchOffsetY) {
