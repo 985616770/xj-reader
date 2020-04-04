@@ -4,18 +4,13 @@ import { getBookmark, getReadTime, saveLocation } from '@/utils/localStorage'
 
 export const storeHomeMixin = {
   computed: {
-    ...mapGetters([
-      'offsetY',
-      'hotSearchOffsetY',
-      'flapCardVisible'
-    ])
+    ...mapGetters(['offsetY', 'hotSearchOffsetY', 'flapCardVisible'])
   },
   methods: {
-    ...mapActions([
-      'setOffsetY',
-      'setHotSearchOffsetY',
-      'setFlapCardVisible'
-    ])
+    ...mapActions(['setOffsetY', 'setHotSearchOffsetY', 'setFlapCardVisible']),
+    showBookDetail(book) {
+      console.log('...')
+    }
   }
 }
 

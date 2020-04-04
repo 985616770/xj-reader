@@ -1,7 +1,7 @@
 <template lang="pug">
   .store-home
     search-bar
-    flap-card
+    flap-card(:data="random")
     scroll(
       :top="scrollTop"
       @onScroll="onScroll"
@@ -14,6 +14,7 @@ import SearchBar from '@/components/home/SearchBar'
 import Scroll from '@/components/common/Scroll'
 import { storeHomeMixin } from '@/utils/mixin'
 import FlapCard from '@/components/home/FlapCard'
+import { home } from '@/api/store'
 
 export default {
   name: 'StoreHome',
@@ -21,7 +22,8 @@ export default {
   components: { FlapCard, Scroll, SearchBar },
   data() {
     return {
-      scrollTop: 94
+      scrollTop: 94,
+      random: null
     }
   },
   methods: {
@@ -34,6 +36,15 @@ export default {
       }
       this.$refs.scroll.refresh()
     }
+  },
+  mounted() {
+    home().then(res => {
+      if (res && res.status === 200) {
+        const { data } = res
+        const randomIndex = Math.floor(Math.random() * data.random.length)
+        this.random = data.random[randomIndex]
+      }
+    })
   }
 }
 </script>

@@ -38,6 +38,12 @@ $animationType: linear;
   justify-content: center;
   align-items: flex-start;
 }
+@mixin columnTop {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
 
 @mixin ellipsis {
   text-overflow: ellipsis;
