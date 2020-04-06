@@ -2,6 +2,15 @@ $ratio: 375/10;
 $animationTime: 0.2s;
 $animationType: linear;
 
+$color-green: rgb(59, 201, 22);
+$color-pink: rgb(255, 102, 159);
+$color-blue: rgb(74, 171, 255);
+$color-yellow: rgb(255, 198, 102);
+$color-green-transparent: rgba(59, 201, 22, .5);
+$color-pink-transparent: rgba(255, 102, 159, .5);
+$color-blue-transparent: rgba(74, 171, 255, .5);
+$color-yellow-transparent: rgba(255, 198, 102, .5);
+
 @function px2rem($px) {
   @return $px/$ratio + rem;
 }
@@ -31,6 +40,17 @@ $animationType: linear;
   justify-content: flex-end;
   align-items: center;
 }
+@mixin top {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+@mixin bottom {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
 
 @mixin columnLeft {
   display: flex;
@@ -42,6 +62,26 @@ $animationType: linear;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-items: center;
+}
+
+@mixin columnRight {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+}
+@mixin columnBottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+@mixin columnCenter {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
 }
 

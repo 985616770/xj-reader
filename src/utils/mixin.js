@@ -1,6 +1,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { addCss, removeAllCss, themeList } from '@/utils/book'
 import { getBookmark, getReadTime, saveLocation } from '@/utils/localStorage'
+import { getCategoryName } from '@/utils/store'
 
 export const storeHomeMixin = {
   computed: {
@@ -9,7 +10,14 @@ export const storeHomeMixin = {
   methods: {
     ...mapActions(['setOffsetY', 'setHotSearchOffsetY', 'setFlapCardVisible']),
     showBookDetail(book) {
-      console.log('...')
+      console.log(book)
+      this.$router.push({
+        path: '/store/detail',
+        query: {
+          fileName: book.fileName,
+          category: getCategoryName(book.category)
+        }
+      })
     }
   }
 }

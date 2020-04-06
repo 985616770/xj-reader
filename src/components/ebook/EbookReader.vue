@@ -171,8 +171,8 @@ export default {
     // 渲染页面
     initRendition() {
       this.rendition = this.book.renderTo('read', {
-        width: innerWidth,
-        height: innerHeight,
+        width: global.innerWidth,
+        height: global.innerHeight,
         method: 'default'
         // flow: 'scrolled'
       })

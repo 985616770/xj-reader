@@ -11,3 +11,19 @@ export function home() {
     url: '/book/home'
   })
 }
+
+export function detail(book) {
+  return axios({
+    method: 'get',
+    url: `${process.env.VUE_APP_BOOK_URL}/book/detail`,
+    params: {
+      fileName: book.fileName
+    }
+  })
+}
+export function list() {
+  return instance({
+    method: 'get',
+    url: '/book/list'
+  })
+}

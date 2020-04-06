@@ -23,7 +23,7 @@
        :class="{'animation': runPointAnimation }")
   .book-card(
     :class="{'animation':runBookCardAnimation}"
-    v-show="runBookCardAnimation"
+    v-if="runBookCardAnimation"
     )
     .book-card-wrapper
       .img-wrapper

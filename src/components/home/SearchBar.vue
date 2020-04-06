@@ -21,6 +21,7 @@
             :placeholder="$t('home.hint')"
             v-model="searchText"
             @click="showHotSearch"
+            @keyup.13.exact="search"
             )
     hot-search-list(v-show="hotSearchVisible" ref="hotSearch")
 </template>
@@ -100,6 +101,14 @@ export default {
     },
     showShadow() {
       this.shadowVisible = true
+    },
+    search() {
+      this.$router.push({
+        path: '/store/list',
+        query: {
+          keyword: this.searchText
+        }
+      })
     }
   }
 }

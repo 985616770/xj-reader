@@ -1,13 +1,6 @@
 @import "mixin";
 
-$color-green: rgb(59, 201, 22);
-$color-pink: rgb(255, 102, 159);
-$color-blue: rgb(74, 171, 255);
-$color-yellow: rgb(255, 198, 102);
-$color-green-transparent: rgba(59, 201, 22, .5);
-$color-pink-transparent: rgba(255, 102, 159, .5);
-$color-blue-transparent: rgba(74, 171, 255, .5);
-$color-yellow-transparent: rgba(255, 198, 102, .5);
+
 
 $moves: (
         (startX: 0, startY: 0, endX: 0, endY: 55, width: 6, height: 6, background: $color-green),
