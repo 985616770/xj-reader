@@ -41,7 +41,6 @@ export function getLocation(fileName) {
 export function saveLocation(fileName, location) {
   setBookObject(fileName, 'location', location)
 }
-
 export function getBookmark(fileName) {
   return getBookObject(fileName, 'bookmark')
 }
@@ -112,6 +111,14 @@ export function getFontSize(fileName) {
 
 export function saveFontSize(fileName, fontSize) {
   setBookObject(fileName, 'fontSize', fontSize)
+}
+
+export function saveBookShelf(shelf) {
+  return setLocalStorage('shelf', shelf)
+}
+
+export function getBookShelf(shelf) {
+  return getLocalStorage('shelf')
 }
 
 export function getBookObject(fileName, key) {

@@ -5451,7 +5451,7 @@ loader-utils@^1.0.2, loader-utils@^1.1.0, loader-utils@^1.2.3:
     emojis-list "^2.0.0"
     json5 "^1.0.1"
 
-localforage@*, localforage@^1.7.2:
+localforage@*, localforage@^1.7.2, localforage@^1.7.3:
   version "1.7.3"
   resolved "https://registry.npm.taobao.org/localforage/download/localforage-1.7.3.tgz#0082b3ca9734679e1bd534995bdd3b24cf10f204"
   integrity sha1-AIKzypc0Z54b1TSZW907JM8Q8gQ=
@@ -9024,6 +9024,11 @@ vue-cli-plugin-pug@~1.0.7:
     pug "^2.0.3"
     pug-plain-loader "^1.0.0"
     raw-loader "^0.5.1"
+
+vue-create-api@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.npm.taobao.org/vue-create-api/download/vue-create-api-0.2.3.tgz#920b4e76349cf6aef692a6f743b96dc09eade5cd"
+  integrity sha1-kgtOdjSc9q72kqb3Q7ltwJ6t5c0=
 
 vue-eslint-parser@^7.0.0:
   version "7.0.0"

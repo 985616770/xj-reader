@@ -1,7 +1,8 @@
 import { mapActions, mapGetters } from 'vuex'
 import { addCss, removeAllCss, themeList } from '@/utils/book'
-import { getBookmark, getReadTime, saveLocation } from '@/utils/localStorage'
-import { getCategoryName } from '@/utils/store'
+import { getBookmark, getBookShelf, getReadTime, saveBookShelf, saveLocation } from '@/utils/localStorage'
+import { appendAddToShelf, gotoBookDetail } from '@/utils/store'
+import { shelf } from '@/api/store'
 
 export const storeHomeMixin = {
   computed: {
@@ -10,14 +11,7 @@ export const storeHomeMixin = {
   methods: {
     ...mapActions(['setOffsetY', 'setHotSearchOffsetY', 'setFlapCardVisible']),
     showBookDetail(book) {
-      console.log(book)
-      this.$router.push({
-        path: '/store/detail',
-        query: {
-          fileName: book.fileName,
-          category: getCategoryName(book.category)
-        }
-      })
+      gotoBookDetail(this, book)
     }
   }
 }
@@ -157,6 +151,57 @@ export const ebookMixin = {
         readTime = Math.ceil(readTime / 60)
       }
       return this.$t('book.haveRead').replace('$1', readTime)
+    }
+  }
+}
+
+export const storeShelfMixin = {
+  computed: {
+    ...mapGetters([
+      'isEditMode',
+      'shelfList',
+      'shelfSelected',
+      'shelfTitleVisible',
+      'offsetY',
+      'shelfCategory',
+      'currentType'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'setIsEditMode',
+      'setShelfList',
+      'setShelfSelected',
+      'setShelfTitleVisible',
+      'setOffsetY',
+      'setShelfCategory',
+      'setCurrentType'
+    ]),
+    showBookDetail(book) {
+      gotoBookDetail(this, book)
+    },
+    getShelfList() {
+      // 对书架的书籍进行缓存
+      let shelfList = getBookShelf()
+      if (!shelfList) {
+        shelf().then(res => {
+          if (res.status === 200 && res.data && res.data.bookList) {
+            shelfList = appendAddToShelf(res.data.bookList)
+            saveBookShelf(shelfList)
+            this.setShelfList(shelfList)
+          }
+        })
+      } else {
+        return this.setShelfList(shelfList)
+      }
+    },
+    getCategoryList(title) {
+      this.getShelfList().then(() => {
+        const categoryList = this.shelfList.filter(book => {
+          return book.type === 2 && book.title === title
+        })[0]
+        this.setShelfCategory(categoryList)
+      })
     }
   }
 }

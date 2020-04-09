@@ -67,18 +67,12 @@
       .bottom-btn(
         @click.stop.prevent="addOrRemoveShelf()"
       )  {{ inBookShelf ? $t('detail.isAddedToShelf') : $t('detail.addOrRemoveShelf') }}
-    toast(
-    :text="toastText"
-    ref="toast"
-    )
 </template>
 
 <script>
 import DetailTitle from '@/components/detail/DetailTitle'
 import Scroll from '@/components/common/Scroll'
 import BookInfo from '@/components/detail/BookInfo'
-import Toast from '@/components/common/Toast'
-
 import { px2rem, realPx } from '@/utils/utils'
 import { detail } from '@/api/store'
 import Epub from 'epubjs'
@@ -87,7 +81,7 @@ global.ePub = Epub
 
 export default {
   name: 'StoreDetail',
-  components: { Toast, BookInfo, Scroll, DetailTitle },
+  components: { BookInfo, Scroll, DetailTitle },
   computed: {
     desc() {
       if (this.description) {
@@ -153,19 +147,13 @@ export default {
   },
   methods: {
     addOrRemoveShelf() {},
-    showToast(text) {
-      this.toastText = text
-      this.$refs.toast.show()
-    },
     readBook() {
-      console.log(this.categoryText)
       this.$router.push({
         path: `/ebook/${this.categoryText}|${this.fileName}`
       })
     },
     trialListening() {},
     read(item) {
-      console.log(this.categoryText)
       this.$router.push({
         path: `/ebook/${this.categoryText}|${this.fileName}`
       })
@@ -227,6 +215,7 @@ export default {
           fileName: this.fileName
         }).then(response => {
           if (response.status === 200 && response.data.error_code === 0 && response.data.data) {
+            this.simpleToast(response.data.msg)
             const data = response.data.data
             this.bookItem = data
             this.cover = this.bookItem.cover
@@ -237,7 +226,7 @@ export default {
             this.opf = `${process.env.VUE_APP_EPUB_OPF_URL}/${this.fileName}/${rootFile}`
             this.parseBook(this.opf)
           } else {
-            this.showToast(response.data.msg)
+            this.simpleToast(response.data.msg)
           }
         })
       }
