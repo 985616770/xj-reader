@@ -27,7 +27,7 @@
       .book-detail-content-wrapper(v-show="ifShowContent")
         .book-detail-content-list-wrapper
           .loading-text-wrapper(v-if="!this.navigation")
-            .loading-text { $t('detail.loading') }}
+            .loading-text {{ $t('detail.loading') }}
           .book-detail-content-item-wrapper
             .book-detail-content-item(
               v-for="(item, index) in flatNavigation"
@@ -85,13 +85,22 @@ import { download, flatList } from '@/api/store'
 import { findBook, getCategoryName } from '@/utils/store'
 import { getLocalForage } from '@/utils/localForage'
 import { realPx } from '@/utils/utils'
+
+import axios from 'axios'
 import Epub from 'epubjs'
 
 global.ePub = Epub
 
 export default {
   name: 'StoreSpeaking',
-  components: { SpeakMask, SpeakBottom, SpeakPlaying, BookInfo, Scroll, DetailTitle },
+  components: {
+    SpeakMask,
+    SpeakBottom,
+    SpeakPlaying,
+    BookInfo,
+    Scroll,
+    DetailTitle
+  },
   computed: {
     currentMinute() {
       const m = Math.floor(this.currentPlayingTime / 60)
@@ -207,53 +216,60 @@ export default {
       /*
        * safari 不支持异步进行请求播放音乐,audio控件
        * */
-      const xmlhttp = new XMLHttpRequest()
-      xmlhttp.open('GET', `${process.env.VUE_APP_VOICE_URL}/voice?text=${text}&lang=${this.lang.toLowerCase()}`, false)
-      xmlhttp.send()
-      const xmlDoc = xmlhttp.responseText
-      if (xmlDoc) {
-        const json = JSON.parse(xmlDoc)
-        if (json.path) {
-          this.$refs.audio.src = json.path
-          this.continuePlay()
-        } else {
-          this.showToast('播放失败，未生成链接')
-        }
-      } else {
-        this.showToast('播放失败')
-      }
-      // axios
-      //   .create({
-      //     baseURL: process.env.VUE_APP_VOICE_URL + '/voice'
-      //   })({
-      //     method: 'get',
-      //     params: {
-      //       text: text,
-      //       lang: this.lang.toLowerCase()
-      //     }
-      //   })
-      //   .then(response => {
-      //     if (response.status === 200) {
-      //       if (response.data.error === 0) {
-      //         const downloadUrl = response.data.path
-      //         console.log('开始下载...%s', downloadUrl)
-      //         downloadMp3(downloadUrl, blob => {
-      //           const url = window.URL.createObjectURL(blob)
-      //           console.log(blob, url)
-      //           this.$refs.audio.src = url
-      //           this.continuePlay()
-      //         })
-      //       } else {
-      //         this.showToast(response.data.msg)
-      //       }
-      //     } else {
-      //       this.showToast('请求失败')
-      //     }
-      //   })
-      //   .catch(err => {
-      //     console.log(err)
-      //     this.showToast('播放失败')
-      //   })
+      // const xmlhttp = new XMLHttpRequest()
+      // xmlhttp.open('GET', `${process.env.VUE_APP_VOICE_URL}/voice?text=${text}&lang=${this.lang.toLowerCase()}`, true)
+      // xmlhttp.send()
+      // const xmlDoc = xmlhttp.responseText
+      // console.log(xmlDoc)
+
+      // if (xmlDoc) {
+      //   const json = JSON.parse(xmlDoc)
+      //   if (json.path) {
+      //     this.$refs.audio.src = json.path
+      //     this.continuePlay()
+      //   } else {
+      //     this.showToast('播放失败，未生成链接')
+      //   }
+      // } else {
+      //   this.showToast('播放失败')
+      // }
+
+      axios
+        .create({
+          baseURL: process.env.VUE_APP_VOICE_URL + '/voice'
+        })({
+          method: 'get',
+          params: {
+            text: text,
+            lang: this.lang.toLowerCase()
+          }
+        })
+        .then(response => {
+          // if (response.status === 200) {
+          //   if (response.data.error === 0) {
+          //     const downloadUrl = response.data.path
+          //     console.log('开始下载...%s', downloadUrl)
+          //     // downloadMp3(downloadUrl, blob => {
+          //     //   const url = window.URL.createObjectURL(blob)
+          //     //   console.log(blob, url)
+          //     //   this.$refs.audio.src = url
+          //     //   this.continuePlay()
+          //     // })
+          //   } else {
+          //     this.showToast(response.data.msg)
+          //   }
+          // } else {
+          //   this.showToast('请求失败')
+          // }
+          const wss = new WebSocket(response.data.url)
+          wss.onopen = e => {
+            console.log(e)
+          }
+        })
+        .catch(err => {
+          console.log(err)
+          this.showToast('播放失败')
+        })
     },
     togglePlay() {
       if (!this.isPlaying) {
@@ -276,24 +292,22 @@ export default {
         this.section = this.book.spine.get(this.chapter.href)
         this.rendition.display(this.section.href).then(section => {
           const currentPage = this.rendition.currentLocation()
-          if (currentPage && currentPage.start) {
-            const cfibase = section.cfiBase
-            const cfistart = currentPage.start.cfi.replace(/.*!/, '').replace(/\)/, '')
-            const cfiend = currentPage.end.cfi.replace(/.*!/, '').replace(/\)/, '')
-            this.currentSectionIndex = currentPage.start.displayed.page
-            this.currentSectionTotal = currentPage.start.displayed.total
-            const cfi = `epubcfi(${cfibase}!,${cfistart},${cfiend})`
-            // console.log(currentPage, cfi, cfibase, cfistart, cfiend)
-            this.book.getRange(cfi).then(range => {
-              let text = range.toLocaleString()
-              text = text.replace(/\s(2,)/g, '')
-              text = text.replace(/\r/g, '')
-              text = text.replace(/\n/g, '')
-              text = text.replace(/\t/g, '')
-              text = text.replace(/\f/g, '')
-              this.updateText(text)
-            })
-          }
+          const cfibase = section.cfiBase
+          const cfistart = currentPage.start.cfi.replace(/.*!/, '').replace(/\)/, '')
+          const cfiend = currentPage.end.cfi.replace(/.*!/, '').replace(/\)/, '')
+          this.currentSectionIndex = currentPage.start.displayed.page
+          this.currentSectionTotal = currentPage.start.displayed.total
+          const cfi = `epubcfi(${cfibase}!,${cfistart},${cfiend})`
+          console.log(currentPage, cfi, cfibase, cfistart, cfiend)
+          this.book.getRange(cfi).then(range => {
+            let text = range.toLocaleString()
+            text = text.replace(/\s(2,)/g, '')
+            text = text.replace(/\r/g, '')
+            text = text.replace(/\n/g, '')
+            text = text.replace(/\t/g, '')
+            text = text.replace(/\f/g, '')
+            this.updateText(text)
+          })
         })
       }
     },
@@ -453,60 +467,75 @@ export default {
 
 <style lang="scss" scoped>
 @import '~@/assets/styles/global';
+
 .book-speaking {
   font-size: px2rem(16);
   width: 100%;
   background: white;
+
   .content-wrapper {
     width: 100%;
+
     .book-speak-title-wrapper {
       display: flex;
       padding: px2rem(15);
       box-sizing: border-box;
       border-bottom: px2rem(1) solid #eee;
+
       .icon-speak-wrapper {
         flex: 0 0 px2rem(40);
         @include left;
+
         .icon-speak {
           font-size: px2rem(24);
           color: #999;
         }
       }
+
       .speak-title-wrapper {
         flex: 1;
         @include left;
+
         .speak-title {
           font-size: px2rem(16);
           font-weight: bold;
           color: #666;
         }
       }
+
       .icon-down-wrapper {
         flex: 0 0 px2rem(40);
         @include right;
+
         .icon-up {
           font-size: px2rem(12);
           color: #999;
         }
+
         .icon-down2 {
           font-size: px2rem(12);
           color: #999;
         }
       }
     }
+
     .book-detail-content-wrapper {
       width: 100%;
       border-bottom: px2rem(1) solid #eee;
       box-sizing: border-box;
+
       .book-detail-content-list-wrapper {
         padding: px2rem(10) px2rem(15);
+
         .loading-text-wrapper {
           width: 100%;
+
           .loading-text {
             font-size: px2rem(14);
             color: #999;
           }
         }
+
         .book-detail-content-item-wrapper {
           .book-detail-content-item {
             display: flex;
@@ -515,13 +544,16 @@ export default {
             line-height: px2rem(16);
             color: #333;
             border-bottom: px2rem(1) solid #eee;
+
             &:last-child {
               border-bottom: none;
             }
+
             .book-detail-content-navigation-text {
               flex: 1;
               width: 100%;
               @include ellipsis;
+
               &.is-playing {
                 color: $color-blue;
                 font-weight: bold;
@@ -533,6 +565,7 @@ export default {
       }
     }
   }
+
   .book-wrapper {
     position: absolute;
     bottom: -100%;

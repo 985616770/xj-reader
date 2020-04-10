@@ -1,4 +1,4 @@
-import { getLocalStorage } from '@/utils/localStorage'
+import { getBookShelf, getLocalStorage, saveBookShelf } from '@/utils/localStorage'
 
 export const flapCardList = [
   {
@@ -263,4 +263,25 @@ export function flatBookList(bookList) {
 export function findBook(fileName) {
   const bookList = getLocalStorage('shelf')
   return flatBookList(bookList).find(item => item.fileName === fileName)
+}
+
+export function removeFromBookShelf(book) {
+  return getBookShelf().filter(item => {
+    if (item.itemList) {
+      item.itemList = item.itemList.filter(subItem => {
+        return subItem.fileName !== book.fileName
+      })
+    }
+    return item.fileName !== book.fileName
+  })
+}
+
+export function addToShelf(book) {
+  let shelfList = getBookShelf()
+  shelfList = removeAddFromShelf(shelfList)
+  book.type = 1
+  shelfList.push(book)
+  shelfList = computeId(shelfList)
+  shelfList = appendAddToShelf(shelfList)
+  saveBookShelf(shelfList)
 }

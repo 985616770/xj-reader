@@ -59,7 +59,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.shelfCategory)
     this.getCategoryList(this.$route.query.title)
     this.setCurrentType(2)
   }

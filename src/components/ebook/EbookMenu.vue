@@ -29,9 +29,6 @@ export default {
   name: 'EbookMenu',
   mixins: [ebookMixin],
   components: { EBookSlide, EbookSettingProgress, EbookSettingTheme, EbookSettingFontPopup, EbookSettingFont },
-  mounted() {
-    console.log(this.settingVisible)
-  },
   methods: {
     showSetting(key) {
       this.setSettingVisible(key)

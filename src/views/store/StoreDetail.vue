@@ -56,7 +56,7 @@
         #preview(
           v-show="this.displayed"
           ref="preview"
-          )
+        )
     .bottom-wrapper
       .bottom-btn(
         @click.stop.prevent="readBook()"
@@ -73,16 +73,25 @@
 import DetailTitle from '@/components/detail/DetailTitle'
 import Scroll from '@/components/common/Scroll'
 import BookInfo from '@/components/detail/BookInfo'
+
+import { removeFromBookShelf, addToShelf } from '@/utils/store'
 import { px2rem, realPx } from '@/utils/utils'
 import { detail } from '@/api/store'
 import Epub from 'epubjs'
 import { getLocalForage } from '@/utils/localForage'
+import { getBookShelf, saveBookShelf } from '@/utils/localStorage'
+import { storeShelfMixin } from '@/utils/mixin'
 
 global.ePub = Epub
 
 export default {
   name: 'StoreDetail',
-  components: { BookInfo, Scroll, DetailTitle },
+  mixins: [storeShelfMixin],
+  components: {
+    BookInfo,
+    Scroll,
+    DetailTitle
+  },
   computed: {
     desc() {
       if (this.description) {
@@ -117,10 +126,10 @@ export default {
       return this.metadata ? this.metadata.creator : ''
     },
     inBookShelf() {
-      if (this.bookItem && this.bookShelf) {
+      if (this.bookItem && this.shelfList) {
         const flatShelf = (function flatten(arr) {
           return [].concat(...arr.map(v => (v.itemList ? [v, ...flatten(v.itemList)] : v)))
-        })(this.bookShelf).filter(item => item.type === 1)
+        })(this.shelfList).filter(item => item.type === 1)
         const book = flatShelf.filter(item => item.fileName === this.bookItem.fileName)
         return book && book.length > 0
       } else {
@@ -147,7 +156,16 @@ export default {
     }
   },
   methods: {
-    addOrRemoveShelf() {},
+    addOrRemoveShelf() {
+      if (this.inBookShelf) {
+        this.setShelfList(removeFromBookShelf(this.bookItem)).then(() => {
+          saveBookShelf(this.shelfList)
+        })
+      } else {
+        addToShelf(this.bookItem)
+        this.setShelfList(getBookShelf())
+      }
+    },
     readBook() {
       this.$router.push({
         path: `/ebook/${this.categoryText}|${this.fileName}`
@@ -200,7 +218,6 @@ export default {
     },
     parseBook(url) {
       this.book = new Epub(url)
-      console.log(this.book)
       this.book.loaded.metadata.then(metadata => {
         this.metadata = metadata
       })
@@ -230,8 +247,7 @@ export default {
         detail({
           fileName: this.fileName
         }).then(response => {
-          if (response.status === 200 && response.data.error_code === 0 && response.data.data) {
-            this.simpleToast(response.data.msg)
+          if (response.status === 200 && response.data.err_code === 0 && response.data.data) {
             const data = response.data.data
             this.bookItem = data
             this.cover = this.bookItem.cover
@@ -276,54 +292,69 @@ export default {
   },
   mounted() {
     this.init()
+    if (!this.shelfList || this.shelfList.length === 0) {
+      this.getShelfList()
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
 @import '~@/assets/styles/global';
+
 .book-detail {
   width: 100%;
   background: white;
+
   .content-wrapper {
     width: 100%;
+
     .book-detail-content-wrapper {
       width: 100%;
       border-bottom: px2rem(1) solid #eee;
       box-sizing: border-box;
+
       .book-detail-content-title {
         font-size: px2rem(20);
         font-weight: bold;
         padding: px2rem(20) px2rem(15) px2rem(10) px2rem(15);
         box-sizing: border-box;
       }
+
       .book-detail-content-list-wrapper {
         padding: px2rem(10) px2rem(15);
         box-sizing: border-box;
+
         .loading-text-wrapper {
           width: 100%;
+
           .loading-text {
             font-size: px2rem(14);
             color: #666;
           }
         }
+
         .book-detail-content-row {
           display: flex;
           box-sizing: border-box;
           margin-bottom: px2rem(10);
+
           .book-detail-content-label {
             flex: 0 0 px2rem(70);
             font-size: px2rem(14);
             color: #666;
           }
+
           .book-detail-content-text {
             flex: 1;
             font-size: px2rem(14);
             color: #333;
           }
         }
+
         #preview {
         }
+
         .book-detail-content-item-wrapper {
           .book-detail-content-item {
             padding: px2rem(15) 0;
@@ -331,12 +362,15 @@ export default {
             line-height: px2rem(16);
             color: #666;
             border-bottom: px2rem(1) solid #eee;
+
             &:last-child {
               border-bottom: none;
             }
+
             .book-detail-content-navigation-text {
               width: 100%;
               @include ellipsis;
+
               &.is-sub {
                 color: #666;
               }
@@ -345,15 +379,18 @@ export default {
         }
       }
     }
+
     .audio-wrapper {
       width: 100%;
       padding: px2rem(15);
       box-sizing: border-box;
+
       #audio {
         width: 100%;
       }
     }
   }
+
   .bottom-wrapper {
     position: fixed;
     bottom: 0;
@@ -363,19 +400,23 @@ export default {
     width: 100%;
     height: px2rem(52);
     box-shadow: 0 px2rem(-2) px2rem(2) rgba(0, 0, 0, 0.1);
+
     .bottom-btn {
       flex: 1;
       color: $color-blue;
       font-weight: bold;
       font-size: px2rem(14);
       @include center;
+
       &:active {
         color: $color-blue-transparent;
       }
+
       .icon-check {
         margin-right: px2rem(5);
       }
     }
+
     &.hide-shadow {
       box-shadow: none;
     }

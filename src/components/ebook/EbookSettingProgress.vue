@@ -65,7 +65,6 @@ export default {
     },
     // 下一章
     nextSection() {
-      console.log()
       if (this.section < this.currentBook.spine.length - 1 && this.bookAvailable) {
         this.setSection(this.section + 1).then(() => {
           this.displaySection()

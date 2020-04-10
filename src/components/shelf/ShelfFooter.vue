@@ -219,7 +219,6 @@ export default {
       return new Promise((resolve, reject) => {
         removeLocalStorage(`${book.categoryText}/${book.fileName}-info`)
         removeLocalForage(`${book.fileName}`)
-        console.log(book)
         resolve(book)
       })
     },
@@ -227,7 +226,6 @@ export default {
      * 书籍移除书架
      * */
     showRemove() {
-      console.log(111)
       let title
       if (this.shelfSelected.length === 1) {
         title = this.$t('shelf.removeBookTitle').replace('$1', `《${this.shelfSelected[0].title}》`)

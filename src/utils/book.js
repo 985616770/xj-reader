@@ -93,10 +93,10 @@ export function removeCss(href) {
 }
 // 删除所有的css文件
 export function removeAllCss() {
-  removeCss(`${process.env.VUE_APP_RES_URL}theme/theme_default.css`)
-  removeCss(`${process.env.VUE_APP_RES_URL}theme/theme_gold.css`)
-  removeCss(`${process.env.VUE_APP_RES_URL}theme/theme_eye.css`)
-  removeCss(`${process.env.VUE_APP_RES_URL}theme/theme_night.css`)
+  removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_default.css`)
+  removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_gold.css`)
+  removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_eye.css`)
+  removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_night.css`)
 }
 // 树状数据结构转换为一维数组结构
 export function flatten(arr) {
