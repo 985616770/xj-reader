@@ -33,8 +33,8 @@ Vue.mixin({
       toast.show()
       toast.updateText(text)
     },
-    dialog() {
-      return this.$createShelfGroupDialog()
+    dialog(settings) {
+      return this.$createShelfGroupDialog({ $props: settings })
     }
   }
 })

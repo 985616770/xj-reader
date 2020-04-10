@@ -1,7 +1,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { addCss, removeAllCss, themeList } from '@/utils/book'
 import { getBookmark, getBookShelf, getReadTime, saveBookShelf, saveLocation } from '@/utils/localStorage'
-import { appendAddToShelf, gotoBookDetail } from '@/utils/store'
+import { appendAddToShelf, computeId, gotoBookDetail, removeAddFromShelf } from '@/utils/store'
 import { shelf } from '@/api/store'
 
 export const storeHomeMixin = {
@@ -201,6 +201,26 @@ export const storeShelfMixin = {
           return book.type === 2 && book.title === title
         })[0]
         this.setShelfCategory(categoryList)
+      })
+    },
+    moveOutOfGroup(cb) {
+      // 解决分类的书籍
+      this.setShelfList(
+        this.shelfList.map(book => {
+          if (book.type === 2 && book.itemList) {
+            book.itemList = book.itemList.filter(subBook => {
+              return !subBook.selected
+            })
+          }
+          return book
+        })
+      ).then(() => {
+        // 解决书架的书籍
+        const list = computeId(appendAddToShelf([].concat(removeAddFromShelf(this.shelfList), ...this.shelfSelected)))
+        this.setShelfList(list).then(() => {
+          this.simpleToast(this.$t('shelf.moveBookOutSuccess'))
+          if (cb) cb()
+        })
       })
     }
   }

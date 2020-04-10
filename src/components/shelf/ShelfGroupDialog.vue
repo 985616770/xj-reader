@@ -42,13 +42,17 @@
 <script>
 import ShelfDialog from '@/components/common/Dialog'
 import { storeShelfMixin } from '@/utils/mixin'
-import { removeAddFromShelf, appendAddToShelf } from '@/utils/store'
+import { removeAddFromShelf, appendAddToShelf, computeId } from '@/utils/store'
 import { saveBookShelf } from '@/utils/localStorage'
 
 export default {
   name: 'ShelfGroupDialog',
   mixins: [storeShelfMixin],
   components: { ShelfDialog },
+  props: {
+    showNewGroup: { type: Boolean, default: false },
+    groupName: { type: String }
+  },
   computed: {
     defaultCategory() {
       return [
@@ -83,11 +87,17 @@ export default {
       return this.currentType === 2
     },
     show() {
+      if (this.showNewGroup) {
+        this.ifNewGroup = this.showNewGroup
+        this.newGroupName = this.groupName
+      }
       this.$refs.dialog.show()
     },
     hide() {
       this.$refs.dialog.hide()
-      this.ifNewGroup = false
+      setTimeout(() => {
+        this.ifNewGroup = false
+      }, 200)
     },
 
     onGroupClick(item) {
@@ -123,23 +133,34 @@ export default {
         this.onComplete()
       })
     },
-    moveOutFromGroup(item) {},
+    moveOutFromGroup(item) {
+      this.moveOutOfGroup(() => {
+        this.onComplete()
+      })
+    },
     createNewGroup() {
       if (!this.newGroupName && this.newGroupName.length === 0) {
         return
       }
-      const group = {
-        id: this.shelfList[this.shelfList.length - 2].id + 1,
-        itemList: [],
-        selected: false,
-        title: this.newGroupName,
-        type: 2
-      }
-      const list = removeAddFromShelf(this.shelfList)
-      list.push(group)
-      this.setShelfList(appendAddToShelf(list)).then(() => {
+      if (this.showNewGroup) {
+        this.shelfCategory.title = this.newGroupName
         this.onComplete()
-      })
+      } else {
+        const group = {
+          id: this.shelfList[this.shelfList.length - 2].id + 1,
+          itemList: [],
+          selected: false,
+          title: this.newGroupName,
+          type: 2
+        }
+        let list = removeAddFromShelf(this.shelfList)
+        list.push(group)
+        list = appendAddToShelf(list)
+        computeId(list)
+        this.setShelfList(list).then(() => {
+          this.moveToGroup(group)
+        })
+      }
     },
     onComplete() {
       saveBookShelf(this.shelfList)
