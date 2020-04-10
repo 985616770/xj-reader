@@ -4,7 +4,8 @@
       @click.stop.prevent="onPlayingCardClick"
       v-if="showPlay"
       )
-    .bottom-playing
+    .bottom-playing-left
+    .bottom-playing-right
 </template>
 
 <script>
