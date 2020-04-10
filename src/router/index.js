@@ -49,6 +49,11 @@ const routes = [
         path: 'category',
         name: 'StoreCategory',
         component: () => import('@/views/store/StoreCategory')
+      },
+      {
+        path: 'speaking',
+        name: 'StoreSpeaking',
+        component: () => import('@/views/store/StoreSpeaking')
       }
     ]
   }

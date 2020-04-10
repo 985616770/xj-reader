@@ -6,6 +6,13 @@ const instance = axios.create({
   timeout: 10000
 })
 
+export function flatList() {
+  return instance({
+    method: 'get',
+    url: '/book/flat-list'
+  })
+}
+
 export function home() {
   return instance({
     method: 'get',
@@ -22,6 +29,7 @@ export function detail(book) {
     }
   })
 }
+
 export function list() {
   return instance({
     method: 'get',

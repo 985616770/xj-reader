@@ -76,6 +76,7 @@ import BookInfo from '@/components/detail/BookInfo'
 import { px2rem, realPx } from '@/utils/utils'
 import { detail } from '@/api/store'
 import Epub from 'epubjs'
+import { getLocalForage } from '@/utils/localForage'
 
 global.ePub = Epub
 
@@ -129,7 +130,7 @@ export default {
   },
   data() {
     return {
-      bookItem: null,
+      bookItem: null, // 书籍对象
       book: null,
       metadata: null,
       trialRead: null,
@@ -152,7 +153,26 @@ export default {
         path: `/ebook/${this.categoryText}|${this.fileName}`
       })
     },
-    trialListening() {},
+    trialListening() {
+      getLocalForage(this.bookItem.fileName, (err, blob) => {
+        if (!err && blob && blob instanceof Blob) {
+          this.$router.push({
+            path: '/store/speaking',
+            query: {
+              fileName: this.bookItem.fileName
+            }
+          })
+        } else {
+          this.$router.push({
+            path: '/store/speaking',
+            query: {
+              fileName: this.bookItem.fileName,
+              opf: this.opf
+            }
+          })
+        }
+      })
+    },
     read(item) {
       this.$router.push({
         path: `/ebook/${this.categoryText}|${this.fileName}`
@@ -163,7 +183,6 @@ export default {
         marginLeft: (item.deep - 1) * px2rem(20) + 'rem'
       }
     },
-    // FIXME: 有问题
     doFlatNavigation(content, deep = 1) {
       const arr = []
       content.forEach(item => {
@@ -175,12 +194,10 @@ export default {
       })
       return arr
     },
-    // FIXME: 有问题
     downloadBook() {
       const opf = `${process.env.VUE_APP_EPUB_URL}/${this.bookItem.categoryText}/${this.bookItem.fileName}/OEBPS/package.opf`
       this.parseBook(opf)
     },
-    // FIXME: 有问题
     parseBook(url) {
       this.book = new Epub(url)
       console.log(this.book)
@@ -205,7 +222,6 @@ export default {
         }
       })
     },
-    // FIXME: 有问题
     init() {
       this.fileName = this.$route.query.fileName
       this.categoryText = this.$route.query.category
@@ -234,7 +250,6 @@ export default {
     back() {
       this.$router.go(-1)
     },
-    // FIXME: 有问题
     display(location) {
       if (this.$refs.preview) {
         if (!this.rendition) {
