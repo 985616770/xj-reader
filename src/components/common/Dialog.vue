@@ -10,7 +10,10 @@
             .dialog-btn(@click="hide") {{ $t('shelf.cancel')}}
             .dialog-btn {{$t('shelf.confirm')}}
 </template>
-
+<!--
+vue2.6 以后 对slot进行的重新的设计
+注意api的更改
+-->
 <script>
 export default {
   name: 'Dialog',

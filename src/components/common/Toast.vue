@@ -35,11 +35,18 @@ export default {
         this.visible = false
       }, this.timeout)
     },
+    /**
+     * 持续显示弹窗
+     */
     continueShow() {
       clearTimeout(this.task)
       this.task = null
       this.visible = true
     },
+    /**
+     * 更新文本值
+     * @param text
+     */
     updateText(text) {
       this.showText = text
     }

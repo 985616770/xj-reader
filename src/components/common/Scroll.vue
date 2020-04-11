@@ -9,7 +9,13 @@
 
 <script>
 import { realPx } from '@/utils/utils'
-
+/*
+ * scroll 组件在很多的地方都用运用
+ * 原理就是:
+ * 采用定位 根据上下的位置定住,
+ * 加上overflow的x,y属性进行移动
+ * 隐藏滚动条
+ * */
 export default {
   name: 'Scroll',
   props: {
@@ -27,13 +33,25 @@ export default {
     }
   },
   methods: {
+    /**
+     * 离 上端的距离 传入父级进行监听
+     * @param e
+     */
     handleScroll(e) {
       const offsetY = e.target.scrollTop || window.pageYOffset || document.body.scrollTop
       this.$emit('onScroll', offsetY)
     },
+    /**
+     * 滚动到一个位置
+     * @param x x轴的偏移量
+     * @param y y轴的偏移量
+     */
     scrollTo(x, y) {
       this.$refs.scrollWrapper.scrollTo(x, y)
     },
+    /**
+     * 刷新容器的高度
+     */
     refresh() {
       if (this.$refs.scrollWrapper) {
         this.$refs.scrollWrapper.style.height = window.innerHeight - realPx(this.top) - realPx(this.bottom) + 'px'
@@ -46,7 +64,6 @@ export default {
   }
 }
 </script>
-
 <style lang="scss" scoped>
 @import '~@/assets/styles/global';
 .scroll-wrapper {

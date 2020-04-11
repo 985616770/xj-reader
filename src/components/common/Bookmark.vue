@@ -23,6 +23,9 @@ export default {
     }
   },
   methods: {
+    /**
+     * 刷新书签的形状
+     */
     refresh() {
       if (this.height && this.width) {
         this.$refs.bookmark.style.borderWidth = `${px2rem(this.height - 5)}rem ${px2rem(this.width / 2)}rem ${px2rem(
