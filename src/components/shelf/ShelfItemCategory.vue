@@ -5,7 +5,7 @@
         v-for="(item, index) in data.itemList"
         :key="index"
       )
-        img.shelf-item-category-img(:src="item.cover")
+        img.shelf-item-category-img(v-lazy="item.cover")
     .shelf-item-category-bg(v-else)
       span.icon-book2
 </template>

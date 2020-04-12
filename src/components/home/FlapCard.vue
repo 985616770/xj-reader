@@ -27,7 +27,7 @@
     )
     .book-card-wrapper
       .img-wrapper
-        img.img(:src="data.cover")
+        img.img(v-lazy="data.cover")
       .content-wrapper
         .content-title {{data ? data.title : ''}}
         .content-author.sub-title-medium {{ data ? data.author : ''}}

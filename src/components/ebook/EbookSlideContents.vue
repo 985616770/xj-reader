@@ -13,7 +13,7 @@
     .slide-contents-search-cancel(v-if="searchVisible" @click="hideSearchPage()") {{$t('book.cancel')}}
   .slide-contents-book-wrapper(v-show="!searchVisible")
     .slide-contents-book-img-wrapper
-      img.slide-contents-book-img(:src="cover")
+      img.slide-contents-book-img(v-lazy="cover")
     .slide-contents-book-info-wrapper
       .slide-contents-book-title
         span.slide-contents-book-title-text {{metadata.title}}

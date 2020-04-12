@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import VueLazyload from 'vue-lazyload'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -9,6 +10,12 @@ import './utils/create-api'
 // import './mock'
 
 Vue.config.productionTip = false
+
+Vue.use(VueLazyload, {
+  preLoad: 1.4,
+  loading: require('@/assets/images/loading.gif'),
+  attempt: 1
+})
 
 new Vue({
   router,

@@ -1,6 +1,6 @@
 <template lang="pug">
   .shelf-item-book
-    img.shelf-item-book-cover(:src="data.cover")
+    img.shelf-item-book-cover(v-lazy="data.cover")
     .private-wrapper(v-show="data.private")
     .private-icon-wrapper(v-show="data.private")
       span.icon-private

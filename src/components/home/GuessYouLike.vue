@@ -10,7 +10,7 @@
          @click="showBookDetail(item)"
        )
         .img-wrapper
-          img.img(:src="item.cover")
+          img.img(v-lazy="item.cover")
         .content-wrapper
           .title.title-big(ref="title") {{ item.title }}
           .author.sub-title(ref="author") {{ item.author }}

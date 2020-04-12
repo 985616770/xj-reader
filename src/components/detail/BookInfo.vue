@@ -1,7 +1,7 @@
 <template lang="pug">
   .cover-title-wrapper
     .cover-title-left-wrapper
-      img.cover-img(:src="cover")
+      img.cover-img(v-lazy="cover")
     .cover-title-right-wrapper
       .detail-cover-title-wrapper
         .cover-title-text {{ title }}

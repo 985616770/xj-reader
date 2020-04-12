@@ -17,8 +17,8 @@
             .num.sub-title-tiny {{ `${item.num} ${$t('home.books')}`}}
           .img-wrapper
             .img-group
-              img.img(:src="item.img1")
-              img.img2(:src="item.img2")
+              img.img(v-lazy="item.img1")
+              img.img2(v-lazy="item.img2")
 </template>
 
 <script>

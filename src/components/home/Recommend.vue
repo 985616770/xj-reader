@@ -8,7 +8,7 @@
       @click="showBookDetail(item)"
       )
         .img-wrapper
-          img.img(:src="item.cover")
+          img.img(v-lazy="item.cover")
         .content-wrapper
           .title.title-medium(ref="title") {{ item.title }}
           .num.sub-title(ref="num") {{ $t('home.readers').replace('$1',item.readers) }}
