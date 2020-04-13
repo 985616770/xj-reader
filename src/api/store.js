@@ -111,3 +111,11 @@ export function download(book, onSuccess, onError, onProgress) {
       })
   )
 }
+
+export function voice(data) {
+  return instance({
+    method: 'get',
+    url: '/voice',
+    params: data
+  })
+}

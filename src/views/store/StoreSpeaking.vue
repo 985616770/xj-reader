@@ -81,12 +81,10 @@ import SpeakPlaying from '@/components/speak/SpeakPlaying'
 import SpeakBottom from '@/components/speak/SpeakBottom'
 import SpeakMask from '@/components/speak/SpeakMask'
 
-import { download, flatList } from '@/api/store'
+import { download, flatList, voice } from '@/api/store'
 import { findBook, getCategoryName } from '@/utils/store'
 import { getLocalForage } from '@/utils/localForage'
 import { realPx } from '@/utils/utils'
-
-import axios from 'axios'
 import Epub from 'epubjs'
 
 global.ePub = Epub
@@ -234,36 +232,19 @@ export default {
       //   this.showToast('播放失败')
       // }
 
-      axios
-        .create({
-          baseURL: process.env.VUE_APP_VOICE_URL + '/voice'
-        })({
-          method: 'get',
-          params: {
-            text: text,
-            lang: this.lang.toLowerCase()
-          }
-        })
+      voice({ text: text, lang: this.lang.toLocaleLowerCase() })
         .then(response => {
-          // if (response.status === 200) {
-          //   if (response.data.error === 0) {
-          //     const downloadUrl = response.data.path
-          //     console.log('开始下载...%s', downloadUrl)
-          //     // downloadMp3(downloadUrl, blob => {
-          //     //   const url = window.URL.createObjectURL(blob)
-          //     //   console.log(blob, url)
-          //     //   this.$refs.audio.src = url
-          //     //   this.continuePlay()
-          //     // })
-          //   } else {
-          //     this.showToast(response.data.msg)
-          //   }
-          // } else {
-          //   this.showToast('请求失败')
-          // }
-          const wss = new WebSocket(response.data.url)
-          wss.onopen = e => {
-            console.log(e)
+          if (response.status === 200) {
+            if (response.data.error === 0) {
+              const url = response.data.path
+              console.log('开始下载...%s', url)
+              this.$refs.audio.src = url
+              this.continuePlay()
+            } else {
+              this.showToast(response.data.msg)
+            }
+          } else {
+            this.showToast('请求失败')
           }
         })
         .catch(err => {

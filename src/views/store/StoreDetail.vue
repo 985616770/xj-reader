@@ -57,7 +57,9 @@
       ) {{ $t('detail.listen') }}
       .bottom-btn(
         @click.stop.prevent="addOrRemoveShelf()"
-      )  {{ inBookShelf ? $t('detail.isAddedToShelf') : $t('detail.addOrRemoveShelf') }}
+      )
+        span.icon-check(v-if="inBookShelf")
+        span {{ inBookShelf ? $t('detail.isAddedToShelf') : $t('detail.addOrRemoveShelf') }}
 </template>
 
 <script>
