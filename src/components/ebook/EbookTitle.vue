@@ -4,12 +4,8 @@ transition(name="slide-down")
     .left
       span.icon-back(@click="back")
     .right
-      .icon-wrapper
+      .icon-wrapper(@click="toShelf")
         span.icon-shelf
-      .icon-wrapper
-        span.icon-cart
-      .icon-wrapper
-        span.icon-more
 </template>
 
 <script>
@@ -21,6 +17,11 @@ export default {
   methods: {
     back() {
       this.$router.go(-1)
+    },
+    toShelf() {
+      this.$router.push({
+        path: '/store/shelf'
+      })
     }
   }
 }

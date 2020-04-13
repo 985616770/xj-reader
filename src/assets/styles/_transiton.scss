@@ -41,6 +41,10 @@
 .slide-right-leave-to {
   transform: translate3d(-100%, 0, 0);
 }
+.slide-left-enter,
+.slide-left-leave-to{
+  transform: translate3d(100%, 0, 0);
+}
 
 .slide-down-enter-to,
 .slide-down-leave,
@@ -52,7 +56,11 @@
 .fade-slide-right-leave,
 .title-move-enter-to,
 .hot-search-move-leave,
-.hot-search-move-enter-to {
+.hot-search-move-enter-to ,
+.slide-left-enter-to,
+.slide-left-leave,
+.slide-right-enter-to,
+.slide-right-leave,{
   transform: translate3d(0, 0, 0);
   opacity: 1;
 }
@@ -71,6 +79,10 @@
 .title-move-enter-active,
 .title-move-leave-active,
 .hot-search-move-enter-active,
-.hot-search-move-leave-active {
+.hot-search-move-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active,
+.slide-left-enter-active,
+.slide-left-leave-active {
   transition: all $animationTime $animationType;
 }

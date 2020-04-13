@@ -48,15 +48,6 @@
                 :style="itemStyle(item)"
                 v-if="item.label"
               ) {{ item.label }}
-      .book-detail-content-wrapper
-        .book-detail-content-title {{ $t('detail.trial') }}
-        .book-detail-content-list-wrapper
-          .loading-text-wrapper(v-if="!this.displayed")
-            span.loading-text {{ $t('detail.loading') }}
-        #preview(
-          v-show="this.displayed"
-          ref="preview"
-        )
     .bottom-wrapper
       .bottom-btn(
         @click.stop.prevent="readBook()"
@@ -145,7 +136,6 @@ export default {
       trialRead: null,
       cover: null,
       navigation: null,
-      displayed: false,
       audio: null,
       randomLocation: null,
       description: null,
@@ -223,20 +213,6 @@ export default {
       })
       this.book.loaded.navigation.then(nav => {
         this.navigation = nav
-        if (this.navigation.toc && this.navigation.toc.length > 1) {
-          const canDisplay = this.display(this.navigation.toc[2].href)
-          if (canDisplay) {
-            canDisplay.then(section => {
-              if (this.$refs.scroll) {
-                this.$refs.scroll.refresh()
-              }
-              this.displayed = true
-              const reg = new RegExp('<.+?>', 'g')
-              const text = section.output.replace(reg, '').replace(/\s\s/g, '')
-              this.description = text
-            })
-          }
-        }
       })
     },
     init() {
@@ -265,22 +241,6 @@ export default {
     },
     back() {
       this.$router.go(-1)
-    },
-    display(location) {
-      if (this.$refs.preview) {
-        if (!this.rendition) {
-          this.rendition = this.book.renderTo('preview', {
-            width: window.innerWidth > 640 ? 640 : window.innerWidth,
-            height: window.innerHeight,
-            method: 'default'
-          })
-        }
-        if (!location) {
-          return this.rendition.display()
-        } else {
-          return this.rendition.display(location)
-        }
-      }
     },
     onScroll(offsetY) {
       if (offsetY > realPx(42)) {

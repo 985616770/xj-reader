@@ -11,7 +11,8 @@
         :class="{'hide-title': !titleVisible}"
         @click="back"
         )
-        span.icon-back.icon
+        span.icon-back.icon(v-if="hotSearchVisible")
+        span.icon-shelf.icon(v-else)
       .search-bar-input-wrapper(:class="{'hide-title': !titleVisible}")
         .search-bar-blank(:class="{'hide-title': !titleVisible}")
         .search-bar-input

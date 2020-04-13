@@ -12,10 +12,21 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
   configureWebpack: {
     devtool: 'source-map',
-    performance: {
-      hints: 'warning',
-      maxAssetSize: 524288,
-      maxEntrypointSize: 524288
+    // performance: {
+    //   hints: 'warning',
+    //   maxAssetSize: 524288,
+    //   maxEntrypointSize: 524288
+    // }
+    externals: {
+      vue: 'Vue',
+      vuex: 'Vuex',
+      'vue-router': 'VueRouter',
+      axios: 'axios',
+      'vue-18n': 'VueI18n',
+      'vue-lazy': 'VueLazyload',
+      'web-storage-cache': 'WebStorageCache',
+      epubjs: 'ePub',
+      'vue-create-api': 'VueCreateAPI'
     }
   },
   devServer: {
