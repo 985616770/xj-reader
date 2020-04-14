@@ -20,4 +20,4 @@
 
 > 二维码
 
-<img src="https://yimg.xjdd.xyz/qrcode.png" alt="qrcode" style="zoom: 25%;" />
+<img src="https://yimg.xjdd.xyz/qrcode.png" alt="qrcode" style="width:200px;height:200px" />
