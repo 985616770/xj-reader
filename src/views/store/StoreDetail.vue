@@ -41,7 +41,7 @@
             .book-detail-content-item(
               v-for="(item, index) in flatNavigation"
               :key="index"
-              @click="read(item)"
+              @click="readBook(item)"
             )
               .book-detail-content-navigation-text(
                 :class="{ 'is-sub': item.deep > 1 }"
@@ -123,7 +123,9 @@ export default {
         const flatShelf = (function flatten(arr) {
           return [].concat(...arr.map(v => (v.itemList ? [v, ...flatten(v.itemList)] : v)))
         })(this.shelfList).filter(item => item.type === 1)
+
         const book = flatShelf.filter(item => item.fileName === this.bookItem.fileName)
+
         return book && book.length > 0
       } else {
         return false
@@ -136,7 +138,7 @@ export default {
       book: null,
       metadata: null,
       trialRead: null,
-      cover: null,
+      cover: '',
       navigation: null,
       audio: null,
       randomLocation: null,
@@ -148,6 +150,7 @@ export default {
     }
   },
   methods: {
+    // 添加或删除
     addOrRemoveShelf() {
       if (this.inBookShelf) {
         this.setShelfList(removeFromBookShelf(this.bookItem)).then(() => {
@@ -158,11 +161,13 @@ export default {
         this.setShelfList(getBookShelf())
       }
     },
+    // 阅读书籍
     readBook() {
       this.$router.push({
         path: `/ebook/${this.categoryText}|${this.fileName}`
       })
     },
+    // 听书
     trialListening() {
       getLocalForage(this.bookItem.fileName, (err, blob) => {
         if (!err && blob && blob instanceof Blob) {
@@ -183,16 +188,13 @@ export default {
         }
       })
     },
-    read(item) {
-      this.$router.push({
-        path: `/ebook/${this.categoryText}|${this.fileName}`
-      })
-    },
+    // 目录层级
     itemStyle(item) {
       return {
         marginLeft: (item.deep - 1) * px2rem(20) + 'rem'
       }
     },
+    // 目录层级判断递归
     doFlatNavigation(content, deep = 1) {
       const arr = []
       content.forEach(item => {
@@ -203,10 +205,6 @@ export default {
         }
       })
       return arr
-    },
-    downloadBook() {
-      const opf = `${process.env.VUE_APP_EPUB_URL}/${this.bookItem.categoryText}/${this.bookItem.fileName}/OEBPS/package.opf`
-      this.parseBook(opf)
     },
     parseBook(url) {
       this.book = new Epub(url)

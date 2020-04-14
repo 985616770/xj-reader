@@ -11,10 +11,15 @@ export function setLocalForage(key, data, cb, cb2) {
     })
 }
 
-export function getLocalForage(key, cb) {
-  localForage.getItem(key, (err, value) => {
-    if (cb) cb(err, value)
-  })
+export function getLocalForage(key, cb, cb2) {
+  localForage
+    .getItem(key)
+    .then(value => {
+      if (cb) cb(value)
+    })
+    .catch(function(err) {
+      if (cb2) cb2(err)
+    })
 }
 
 export function removeLocalForage(key, cb, cb2) {
@@ -70,9 +75,5 @@ export function iteratorLocalForage() {
 
 export function support() {
   const indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || null
-  if (indexedDB) {
-    return true
-  } else {
-    return false
-  }
+  return indexedDB !== undefined
 }

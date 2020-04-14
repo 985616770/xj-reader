@@ -1,7 +1,6 @@
-// 静态的资源
-// 字号
 import { realPx } from '@/utils/utils'
 
+// 字号
 export const FONT_SIZE_LIST = [
   { fontSize: 12 },
   { fontSize: 14 },
@@ -11,14 +10,14 @@ export const FONT_SIZE_LIST = [
   { fontSize: 22 },
   { fontSize: 24 }
 ]
+
 // 字体
 export const FONT_FAMILY = [
   { font: 'Default' },
   { font: 'Cabin' },
   { font: 'Days One' },
   { font: 'Montserrat' },
-  { font: 'Tangerine' },
-  { font: 'IndieFlower' }
+  { font: 'Tangerine' }
 ]
 // 主题
 export function themeList(vue) {
@@ -98,7 +97,12 @@ export function removeAllCss() {
   removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_eye.css`)
   removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_night.css`)
 }
-// 树状数据结构转换为一维数组结构
+
+// 树状数据结构转换为一维数组结构(重点)
 export function flatten(arr) {
-  return [].concat(...arr.map(item => [].concat(item, item.subitems)))
+  return [].concat(
+    ...arr.map(item => {
+      return [].concat(item, item.subitems)
+    })
+  )
 }

@@ -4,6 +4,7 @@ import { getBookmark, getBookShelf, getReadTime, saveBookShelf, saveLocation } f
 import { appendAddToShelf, computeId, gotoBookDetail, removeAddFromShelf } from '@/utils/store'
 import { shelf } from '@/api/store'
 
+// 首页的 mixin混入
 export const storeHomeMixin = {
   computed: {
     ...mapGetters(['offsetY', 'hotSearchOffsetY', 'flapCardVisible'])
@@ -15,7 +16,7 @@ export const storeHomeMixin = {
     }
   }
 }
-
+// 阅读器的混入
 export const ebookMixin = {
   computed: {
     ...mapGetters([
@@ -39,9 +40,11 @@ export const ebookMixin = {
       'offsetY',
       'isBookmark'
     ]),
+    // 主题列表
     themeList() {
       return themeList(this)
     },
+    // 获取章节名称
     getSectionName() {
       return this.section ? this.navigation[this.section].label : ''
     }
@@ -68,7 +71,7 @@ export const ebookMixin = {
       'setOffsetY',
       'setIsBookmark'
     ]),
-    //  初始化全局样式
+    //  初始化全局主题
     initGlobalStyle() {
       removeAllCss()
       switch (this.defaultTheme) {
@@ -91,6 +94,7 @@ export const ebookMixin = {
     },
     // 变换百分比,保存进度
     refreshLocation() {
+      // 当前的位置
       const currentLocation = this.currentBook.rendition.currentLocation()
       if (currentLocation && currentLocation.start) {
         const startCfi = currentLocation.start.cfi
@@ -99,7 +103,9 @@ export const ebookMixin = {
         this.setSection(currentLocation.start.index)
         saveLocation(this.fileName, startCfi)
         const bookmark = getBookmark(this.fileName)
+        // 添加书签
         if (bookmark) {
+          // 判断书签是否添加的算法
           if (bookmark.some(item => item.cfi === startCfi)) {
             this.setIsBookmark(true)
           } else {
@@ -108,12 +114,13 @@ export const ebookMixin = {
         } else {
           this.setIsBookmark(false)
         }
-        // 总页数
+        // 总页数(极其不准)
         if (this.pagelist) {
           const totalPage = this.pagelist.length
           const currentPage = currentLocation.start.location
           if (currentPage && currentPage > 0) {
-            this.setPaginate(currentPage + ' / ' + totalPage)
+            const percentNum = Math.floor((currentPage / totalPage) * 100)
+            this.setPaginate(`${percentNum}%`)
           } else {
             this.setPaginate('')
           }
@@ -155,6 +162,7 @@ export const ebookMixin = {
   }
 }
 
+// 书架的mixin
 export const storeShelfMixin = {
   computed: {
     ...mapGetters([
@@ -177,13 +185,16 @@ export const storeShelfMixin = {
       'setShelfCategory',
       'setCurrentType'
     ]),
+    // 跳到详情页
     showBookDetail(book) {
       gotoBookDetail(this, book)
     },
+    // 获取书架信息
     getShelfList() {
       // 对书架的书籍进行缓存
       let shelfList = getBookShelf()
       if (!shelfList) {
+        // 发送axios请求
         shelf().then(res => {
           if (res.status === 200 && res.data && res.data.bookList) {
             shelfList = appendAddToShelf(res.data.bookList)
@@ -195,6 +206,7 @@ export const storeShelfMixin = {
         return this.setShelfList(shelfList)
       }
     },
+    // 获取分类页详情
     getCategoryList(title) {
       this.getShelfList().then(() => {
         const categoryList = this.shelfList.filter(book => {
@@ -203,8 +215,9 @@ export const storeShelfMixin = {
         this.setShelfCategory(categoryList)
       })
     },
+    // 移出分类
     moveOutOfGroup(cb) {
-      // 解决分类的书籍
+      // 解决分类的书籍的算法
       this.setShelfList(
         this.shelfList.map(book => {
           if (book.type === 2 && book.itemList) {
@@ -215,7 +228,7 @@ export const storeShelfMixin = {
           return book
         })
       ).then(() => {
-        // 解决书架的书籍
+        // 移出的书添加到主页书架中
         const list = computeId(appendAddToShelf([].concat(removeAddFromShelf(this.shelfList), ...this.shelfSelected)))
         this.setShelfList(list).then(() => {
           this.simpleToast(this.$t('shelf.moveBookOutSuccess'))

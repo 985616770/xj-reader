@@ -10,13 +10,13 @@ const book = {
     bookAvailable: false, // 图书是否可用
     progress: 0, // 进度
     section: 0, // 章节
-    isPaginating: true, //
+    isPaginating: true, // 是否分页
     currentBook: null, // 当前书籍
-    navigation: null, //
+    navigation: null, // 导航
     cover: null, // 封面图片
     metadata: null, // 书籍信息
-    paginate: '', //
-    pagelist: null, //
+    paginate: '', // 页数
+    pagelist: null, // 页数列表
     offsetY: 0, // 偏移量
     isBookmark: null // 是否为书签页
   },

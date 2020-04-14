@@ -18,14 +18,6 @@ export function clearLocalStorage() {
   return localStorage.clear()
 }
 
-export function getHome() {
-  return getLocalStorage('home')
-}
-
-export function saveHome(home) {
-  return setLocalStorage('home', home, 1800)
-}
-
 export function getLocale() {
   return getLocalStorage('locale')
 }

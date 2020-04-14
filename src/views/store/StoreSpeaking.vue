@@ -190,7 +190,7 @@ export default {
       book: null,
       rendition: null,
       metadata: null,
-      cover: null,
+      cover: '',
       navigation: null,
       description: null,
       ifShowContent: true,
@@ -350,7 +350,7 @@ export default {
       if (this.bookItem) {
         getLocalForage(fileName, (err, blob) => {
           if (err || !blob) {
-            // this.downloadBook(fileName)
+            this.downloadBook(fileName)
             this.isOnline = true
             const opf = this.$route.query.opf
             if (opf) {
@@ -377,12 +377,14 @@ export default {
     },
     parseBook(blob) {
       this.book = new Epub(blob)
+      console.log(this.book)
       this.book.loaded.metadata.then(metadata => {
         this.metadata = metadata
       })
       if (this.isOnline) {
         this.book.coverUrl().then(url => {
           this.cover = url
+          console.log(url)
         })
       } else {
         this.book.loaded.cover.then(cover => {

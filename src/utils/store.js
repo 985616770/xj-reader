@@ -191,6 +191,11 @@ export function categoryText(category, vue) {
   }
 }
 
+/**
+ * 添加加入书籍功能
+ * @param list
+ * @returns {*}
+ */
 export function appendAddToShelf(list) {
   list.push({
     id: -1,
@@ -199,16 +204,30 @@ export function appendAddToShelf(list) {
   return list
 }
 
+/**
+ * 删除加入书籍功能
+ * @param list
+ * @returns {*}
+ */
 export function removeAddFromShelf(list) {
   return list.filter(item => item.type !== 3)
 }
 
+/**
+ * 跳转路由
+ * @param vue
+ */
 export function gotoStoreHome(vue) {
   vue.$router.push({
     path: '/store/home'
   })
 }
 
+/**
+ * 跳转书籍详细页
+ * @param vue
+ * @param book
+ */
 export function gotoBookDetail(vue, book) {
   vue.$router.push({
     path: '/store/detail',
@@ -219,6 +238,11 @@ export function gotoBookDetail(vue, book) {
   })
 }
 
+/**
+ * 重新记录书籍的id
+ * @param list
+ * @returns {*}
+ */
 export function computeId(list) {
   return list.map((book, index) => {
     if (book.type !== 3) {
@@ -232,6 +256,11 @@ export function computeId(list) {
   })
 }
 
+/**
+ * 多层数据结构扁平化
+ * @param bookList
+ * @returns {*[]|*}
+ */
 export function flatBookList(bookList) {
   if (bookList) {
     let orgBookList = bookList.filter(item => {
@@ -250,6 +279,7 @@ export function flatBookList(bookList) {
         })
       }
     })
+    // id重新排序
     orgBookList.forEach((item, index) => {
       item.id = index + 1
     })
@@ -260,11 +290,21 @@ export function flatBookList(bookList) {
   }
 }
 
+/**
+ * 从书架中寻找是否存在,存在就取出
+ * @param fileName
+ * @returns {T}
+ */
 export function findBook(fileName) {
   const bookList = getLocalStorage('shelf')
   return flatBookList(bookList).find(item => item.fileName === fileName)
 }
 
+/**
+ * 从书架删除
+ * @param book
+ * @returns {*}
+ */
 export function removeFromBookShelf(book) {
   return getBookShelf().filter(item => {
     if (item.itemList) {
@@ -276,6 +316,10 @@ export function removeFromBookShelf(book) {
   })
 }
 
+/**
+ * 添加☞书架
+ * @param book
+ */
 export function addToShelf(book) {
   let shelfList = getBookShelf()
   shelfList = removeAddFromShelf(shelfList)
