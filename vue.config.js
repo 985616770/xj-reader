@@ -9,13 +9,16 @@
 // const flatListData = require('./src/mock/bookFlatList')
 
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
-const productionGzipExtensions = ['js', 'css']
+// 代码压缩
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+
 const isProduction = process.env.NODE_ENV === 'production'
 
 module.exports = {
   publicPath: isProduction ? './' : '/',
   configureWebpack: config => {
     if (isProduction) {
+      // cdn
       config.externals = {
         vue: 'Vue',
         vuex: 'Vuex',
@@ -36,6 +39,22 @@ module.exports = {
           minRatio: 0.8
         })
       )
+      // 代码压缩
+      config.plugins.push(
+        new UglifyJsPlugin({
+          uglifyOptions: {
+            // 生产环境自动删除console
+            compress: {
+              drop_debugger: true,
+              drop_console: true,
+              pure_funcs: ['console.log']
+            }
+          },
+          sourceMap: false,
+          parallel: true
+        })
+      )
+
       // 开启分离js
       config.optimization = {
         runtimeChunk: 'single',
