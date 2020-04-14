@@ -15,21 +15,21 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const isProduction = process.env.NODE_ENV === 'production'
 
 module.exports = {
-  publicPath: isProduction ? './' : '/',
+  publicPath: isProduction ? '/book/' : '/',
   configureWebpack: config => {
+    // cdn
+    config.externals = {
+      vue: 'Vue',
+      vuex: 'Vuex',
+      'vue-router': 'VueRouter',
+      axios: 'axios',
+      'vue-18n': 'VueI18n',
+      'vue-lazy': 'VueLazyload',
+      'web-storage-cache': 'WebStorageCache',
+      epubjs: 'ePub',
+      'vue-create-api': 'VueCreateAPI'
+    }
     if (isProduction) {
-      // cdn
-      config.externals = {
-        vue: 'Vue',
-        vuex: 'Vuex',
-        'vue-router': 'VueRouter',
-        axios: 'axios',
-        'vue-18n': 'VueI18n',
-        'vue-lazy': 'VueLazyload',
-        'web-storage-cache': 'WebStorageCache',
-        epubjs: 'ePub',
-        'vue-create-api': 'VueCreateAPI'
-      }
       // 开启gzip压缩
       config.plugins.push(
         new CompressionWebpackPlugin({
