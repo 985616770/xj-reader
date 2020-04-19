@@ -72,6 +72,9 @@ export default {
   width: 100%;
   overflow-x: hidden;
   overflow-y: scroll;
+  scrollbar-color: transparent transparent;
+  scrollbar-track-color: transparent;
+  -ms-scrollbar-track-color: transparent;
   -webkit-overflow-scrolling: touch; /* 当手指从触摸屏上移开，会保持一段时间的滚动 */
   &::-webkit-scrollbar {
     display: none;
