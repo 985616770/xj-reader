@@ -1,7 +1,8 @@
 <template lang="pug">
   #app
     transition(:name="transitionName")
-      router-view
+      keep-alive
+        router-view
 </template>
 <script>
 export default {
